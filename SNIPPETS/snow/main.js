@@ -109,7 +109,7 @@ function Particle( context, boundaries )
 
     this.animate = function() 
     {
-        if( Math.ceil( Math.random() * 10 ) == 10  ) {
+        if( Math.ceil( Math.random() * 20 ) == 20  ) {
             this.set_direction(); // allow direction to change when comming from top again
         }
         this.set_position( this.get_position().x + this.animX,
