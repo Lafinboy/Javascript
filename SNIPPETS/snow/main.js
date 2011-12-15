@@ -141,7 +141,6 @@ function Particle( context, boundaries )
     this.create = function() {
            var x = Math.floor( Math.random() * this.boundaries.x ),
                y = Math.ceil( this.size / 2 );
-               //y = Math.ceil( this.size / 2 );
 
            this._position.x = x;
            this._position.y = y;
