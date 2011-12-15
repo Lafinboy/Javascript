@@ -96,9 +96,7 @@ function Particle( context, boundaries )
         this.context.fillStyle = "#fff";
         this.context.beginPath();
         this.context.arc( this.get_position().x, this.get_position().y, this.size, 0, Math.PI*2, true);
-        this.context.closePath();
-        this.context.fill();
-            
+
         /*
         // add stroke
         this.context.lineWidth = 2;
@@ -111,6 +109,10 @@ function Particle( context, boundaries )
         this.context.shadowBlur = 3;
         this.context.shadowColor = "rgba(255, 255, 255, 0.6)";
         */
+
+        this.context.closePath();
+        this.context.fill();
+            
     };
 
     this.set_direction = function() {
