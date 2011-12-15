@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Custom forms</title>
+<!-- <script type="text/javascript" src="customForms.js"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="customForms.js"></script>
+<script>
+$(document).ready(function() {
+  /* can use like this */
+  
+  // $('select').cstmForm();
+  // $('input[type=radio]
+  // $('input[type=radio], input[type=checkbox], select').cstmForm();
+  // or just do it auto for every element
+  
+  $('form').cstmForm();
+});
+</script>
+<LINK REL=StyleSheet HREF="style.css" TYPE="text/css" MEDIA=screen>
+</head>
+<body>
+
+	<form action="" method="post" style="width: 500px; margin: 0 auto; ">
+
+
+	  <legend>PROTOTYPE</legend>
+
+		<label for="name">Name: </label>
+		<input type="text" name="name" value="" />
+		<br /><br />
+		<label for="name">Name: </label>
+		<input type="text" name="email" value="" />
+		<br /><br />
+		<label for="sex">Sex:</label>
+
+		<select name="sex">
+			<option>select..</option>
+			<option name="sex" value="male">Super Male</option>
+			<option name="sex" value="female">super Female</option>
+		</select>
+		<br /><br />
+		<label id="minor" for="age">age > 18: </label>
+		<input id="over" type="radio" name="age" value="over" />
+		<label for="age">age = 18: </label>
+		<input type="radio" name="age" value="current" />
+		<label for="age">age < 18: </label>
+		<input id="younger" type="radio" name="age" value="younger" />
+		<br /><br />
+		<label for="happy">I am happy: </label>
+		<input type="checkbox" name="happy" value="1" />
+		<br /><br />
+		<label for="happy">I accept all answers:</label>
+		<input type="checkbox" name="agree" value="1" />
+		
+	</form>
+	
+	<br /><br />
+	<hr />
+	<br /><br />
+	
+	<form action="" method="post" style="width: 500px; margin: 0 auto; ">
+		<label for="asd">I acceasdasdasd ll answers:</label>
+		<input type="checkbox" name="asd" value="1" />
+	</form>
+</body>
+</html>

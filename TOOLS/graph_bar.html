@@ -1,0 +1,149 @@
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>Graph Bar</title>
+    <style>
+      
+      #p1 {
+          background: red;
+          width: 400px;
+          display: none;
+          height: 40px;
+      }
+
+      #p3 {
+          background: purple;
+          width: 400px;
+          display: none;
+          height: 40px;
+      }
+
+      #p2 {
+          background: blue;
+          width: 400px;
+          height: 40px;:  display: none;
+          display: none;
+      }
+
+      #p4 {
+          background: green;
+          width: 400px;
+          height: 40px;:  display: none;
+          display: none;
+      }
+
+      p.pp {
+        float: left;
+      }
+      div.bar {
+          float: left;
+          margin-right: 3px;
+      }
+      div.cont {
+        overflow: hidden;
+      }
+
+    </style>    
+    <script src="dependencies/jquery-1.6.4.min.js"></script>
+    <script>
+      function Graphic( bar, indicator )
+      {
+      var self = this;
+
+      this.bar = $( bar ); // progress bar
+      this.indicator = parseInt( $( indicator ).html() ); // max value
+      this.time = 2500; // animation duration time
+
+      function calculate_final_size( obj, percentage ) 
+      {   
+         var _maxWidth = parseInt( $( obj ).css('width') );
+         var _percentage = ( parseInt( percentage ) ) / 100;
+
+         $( obj ).css('width', parseInt( _maxWidth * _percentage ) );
+      }   
+
+      function reset_indicator()
+      {
+          $( indicator ).html('0')
+      }
+
+      function grow( obj, timer )
+      {   
+          $(obj).animate({
+              width: 'toggle',
+          },  
+          {   
+              duration: timer,
+              //step: percentage,
+              specialEasing: {
+                  width: 'linear',
+              },  
+              complete: function() {
+                  // do something
+              }   
+          });
+      }
+
+      function grow_percentage( obj, timer )
+      {   
+          var unit = timer / self.indicator; 
+
+          var update = setInterval( function() 
+          {
+             $( obj ).html( parseInt( $( obj ).html() ) + 1 );
+             var val =  parseInt( $( obj ).html() );
+
+             if( val == self.indicator )
+                  clearInterval( update );
+
+          }, unit );
+      }   
+
+      var init = function( self ) {
+          calculate_final_size( self.bar, self.indicator );
+          reset_indicator();
+          grow( self.bar, self.time );
+          grow_percentage( indicator, self.time );
+      }( self );
+  }
+  $(function()
+  { 
+    grafic = new Graphic( '#p1', '#v1' );
+    grafic = new Graphic( '#p2', '#v2' );
+    grafic = new Graphic( '#p3', '#v3' );
+    grafic = new Graphic( '#p4', '#v4' );
+  });
+
+    </script>
+
+
+</head>
+<body>
+<div id="slider">
+</div>
+
+<div class="cont">
+  <div class="bar" id="p1"></div>
+  <p class="pp"><span id="v1">58</span>%</p>
+</div>
+
+<div class="cont">
+  <div class="bar" id="p2"></div>
+  <p class="pp"><span id="v2">12</span>%</p>
+</div>
+
+<div class="cont">
+  <div class="bar" id="p3"></div>
+  <p class="pp"><span id="v3">22</span>%</p>
+</div>
+
+<div class="cont">
+  <div class="bar" id="p4"></div>
+  <p class="pp"><span id="v4">8</span>%</p>
+</div>
+
+</body>
+</html>
+
+

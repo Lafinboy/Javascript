@@ -1,0 +1,199 @@
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>Slider Snap</title>
+    <style>
+#wrap{ margin: 0 auto; width: 600px; }
+#slider { 
+ background: grey;
+ width:400px; 
+ height: 50px; 
+ position: relative;
+}    
+#answer1 {
+ background: black;
+ height: 50px;
+ width: 30px;
+ position: absolute;
+ left: 0px;
+}
+#answer2 {
+ background: green;
+ height: 50px;
+ width: 30px;
+ position: absolute;
+ right: 0px;
+}
+#sliderControl {
+ background: blue;
+ height: 50px;
+ width: 30px;
+ position: absolute;
+ top: 0px; 
+ left: 20px;
+}
+
+    </style>
+    <script src="dependencies/jquery-1.6.4.min.js" ></script>
+    <script>
+      function Slider( slider, handle, dragpoint1, dragpoint2 )
+      {
+          var self = this;
+
+          this.slider = slider;
+          this.slider_width = parseInt( $( self.slider ).css('width') );
+          this.slider_offset = $( self.slider ).offset(); // distance from the screen
+
+          this.handle = handle;
+          this.handle_width = parseInt( $( self.handle ).css('width') );
+          this.handle_start_point = center();
+
+          this.dragpoint1 = dragpoint1;
+          this.dragpoint2 = dragpoint2;
+          this.dropLeft = parseInt( $( self.dragpoint1 ).css('width') ); // left drop points 
+          this.dropRight = self.slider_width - ( 2 * parseInt( $( self.dragpoint2 ).css('width') ) ); // right drop points
+
+          this.snap_timer = 100; // controls the time for the snapping
+          this.snap_boundaries = 30; // how close to the box needs to be for the snap to happen
+
+          function center()
+          {
+             // centers the dragger
+             return ( self.slider_width / 2 ) - ( self.handle_width / 2 ); // center the handle
+          }
+
+          function stop_dragging()
+          {
+              $( self.handle ).removeClass('dragging');
+          }
+
+          function stop_browser_default( event ) 
+          {
+              event.preventDefault();
+              event.stopPropagation();
+          }
+
+          function go_to_start()
+          {
+              return 0;
+          }
+
+          function go_to_end()
+          {
+              return ( self.slider_width - self.handle_width );
+          }
+
+          function check_boundaries()
+          {
+              // snaps depending on position
+              var position = parseInt( $( self.handle ).css('left') );
+              if( position <= ( self.dropLeft + self.snap_boundaries ) )
+                  self.snap('left');
+              else if( position >= ( self.dropRight - self.snap_boundaries  ) )
+                  self.snap('right');
+              else
+                  self.snap(); // snaps to the middle
+          }
+
+          this.snap = function( option )
+          {
+              var snap;
+
+              switch( option )
+              {
+                  case "left":
+                      var snap = go_to_start();
+                      break;
+                  case "right":
+                      var snap = go_to_end();
+                      break;
+                  default:
+                      var snap = center();
+                      break;
+                      
+              }
+
+              $( self.handle ).animate(
+                  {
+                      left: snap 
+                  }, 
+                  self.snap_timer, 
+                  function() {
+                      // complete callback
+                  }
+              );
+          }
+
+          var events = function( self )
+          {
+
+              $( self.handle ).mousedown(function( event ){
+                  $(this).addClass('dragging');
+                  stop_browser_default( event );
+              });
+
+              $( self.slider ).mousemove(function( event ){
+                  stop_browser_default( event );
+
+                  if( $( self.handle ).hasClass('dragging') )
+                  {
+                      var leftval = 0;
+          
+                      if( event.clientX >= ( self.slider_width - ( self.handle_width  ) ) + self.slider_offset.left )
+                          leftval = go_to_end();
+                      else if( event.clientX <= self.slider_offset.left + ( self.handle_width  ) )
+                          leftval = go_to_start();
+                      else
+                          leftval = event.clientX - self.slider_offset.left - ( self.handle_width / 2 );
+
+                      $( self.handle ).css({
+                          left: leftval
+                      });
+                  }
+                  else 
+                      return;
+
+              }).click(function(event)
+              {
+                  stop_browser_default( event );
+                  $( self.handle ).removeClass('dragging');
+              }).bind('mouseleave mouseup', function()
+              {
+                  // let the mouse up from window stop the dragging
+                  $( self.handle ).removeClass('dragging');
+                  check_boundaries(); // snap to a location
+              });
+
+          }( self );
+
+          var init = function( self ) {
+              // init
+              $( self.handle ).css('left', self.handle_start_point ); 
+          }( self );
+      }
+
+
+
+      $(document).ready(function(){
+          slider = new Slider( '#slider', '#sliderControl', '#answer1', '#answer2' );
+      });
+    </script>
+
+</head>
+<body>
+
+  <div id="wrap">
+
+            <div id="slider">
+               <div id="answer1"></div>
+               <div id="answer2"></div>
+               <div id="sliderControl"></div> 
+            </div>
+
+  </div>
+
+</body>
+</html>
+
+
