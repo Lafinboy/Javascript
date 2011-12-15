@@ -98,6 +98,19 @@ function Particle( context, boundaries )
         this.context.arc( this.get_position().x, this.get_position().y, this.size, 0, Math.PI*2, true);
         this.context.closePath();
         this.context.fill();
+            
+        /*
+        // add stroke
+        this.context.lineWidth = 2;
+        this.context.strokeStyle = "rgba( 255, 255, 255, 0.7)";
+        this.context.stroke();
+
+        // add shadow
+        this.context.shadowOffsetX = 2;
+        this.context.shadowOffsetY = 2;
+        this.context.shadowBlur = 3;
+        this.context.shadowColor = "rgba(255, 255, 255, 0.6)";
+        */
     };
 
     this.set_direction = function() {
