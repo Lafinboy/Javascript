@@ -24,7 +24,7 @@ function Snow( options )
        return ( compatible ) ? canvas : false; 
     }
 
-    this.addSnow = function( context ) 
+    this.addParticle = function( context ) 
     {
         for( var i=0; i<this.numParticles; i++ ) 
         {
@@ -131,7 +131,7 @@ function Particle( context, boundaries )
         if( this.get_position().x > this.boundaries.x || this.get_position().x < 0  ||
             this.get_position().y > this.boundaries.y ) 
         {
-                this.set_position( this._position.x, this._position.y );
+                this.restore();
                 this.set_direction(); // allow direction to change when comming from top again
         }
 
@@ -161,6 +161,6 @@ function init()
     var canvas = snow.generate_canvas( document.getElementById('canvasdiv'),
                          document.getElementById('canvas') );
 
-    snow.addSnow( canvas.getContext('2d') );
+    snow.addParticle( canvas.getContext('2d') );
                          
 }
