@@ -1,12 +1,20 @@
 window.onload = init;
 
-function Snow( options )
+
+var Helper = {
+    match_probability: function( percentage ) {
+        return Math.ceil( Math.random() * Math.ceil( 100/percentage ) ) == Math.ceil( 100/percentage ); 
+    }
+};
+
+function Smoke( options )
 {
     var self = this;
 
-    this.numParticles = 500;
+    this.numParticles = 200;
     this.particles = [];
     this.running_animation = null;
+    this.mousePos = { X: null, Y: null };
 
     this.generate_canvas = function( container, holder ) 
     {
@@ -24,12 +32,12 @@ function Snow( options )
        return ( compatible ) ? canvas : false; 
     }
 
-    this.addParticle = function( context ) 
+    this.addParticle = function( context, position ) 
     {
         for( var i=0; i<this.numParticles; i++ ) 
         {
            var p = new Particle( context, { x: self.width, y: self.height } ); 
-           p.create();
+           p.create( position.X, position.Y );
            this.particles[this.particles.length] = p; 
         }
 
@@ -54,6 +62,24 @@ function Snow( options )
     {
         self.canvas.width = self.width;
     }
+
+    function mouse_pos( event )
+    {
+        self.mousePos = { X: ( event.clientX - self.canvas.offsetLeft ) + window.scrollX, 
+                          Y: ( event.clientY - self.canvas.offsetTop ) + window.scrollY };
+
+        self.particles = [];
+        self.addParticle( self.canvas.getContext("2d"), self.mousePos ); 
+    }    
+
+    function events()
+    {
+        window.addEventListener("click", mouse_pos, false );
+    }
+
+    (function(){
+       events(); 
+    })();
 }
 
 function CanvasOB( context )
@@ -65,21 +91,29 @@ function CanvasOB( context )
 
     this.redraw  = function() { };
 
-    this.restore = function() {
+    this.restore = function()
+    {
         this.set_position( this._position.x, this._position.y );    
     };
 
-    this.get_position  = function() {
+    this.get_position  = function()
+    {
         return this.position; 
     };
 
-    this.set_position  = function( x, y ) {
+    this.set_position  = function( x, y )
+    {
         this.position.x = x; 
         this.position.y = y; 
     };
 
-    this.set_size = function( size ) {
+    this.set_size = function( size )
+    {
         this.size = size; 
+    };
+
+    this.clearObj = function() {
+        
     };
 }
 
@@ -88,14 +122,25 @@ function Particle( context, boundaries )
     var self = this;
     this.__proto__ = new CanvasOB( context );
     this.boundaries = boundaries;
-    this.animX = Math.ceil( Math.random() * 2 );
-    this.animY = Math.ceil( Math.random() * 3 ) + 3;
+    this.animX = Math.ceil( Math.random() * 6 );
+    this.animY = Math.ceil( Math.random() * 20 ) + 15;
+    this.animSize = 8;
+    this.maxSize = 150;
 
-    this.redraw = function( x, y, size )
-    {
-        var size = ( self.size + 1 ) < 30 ? self.size + 1 : 30;
-        self.set_size( size );
-        this.context.fillStyle = "rgba( 255, 255, 255, 0.008)";
+    this.opa = 0.090;
+    this.animOpa = 0.0035;
+
+    this.redraw = function( x, y, size ) {
+
+        if( !self.opa ) { return;  }
+
+        if( Helper.match_probability(33) ) {
+            self.set_size( self.grow( self.size, self.maxSize, self.animSize ) );
+        }
+
+        self.opa = self.fade( self.opa, self.animOpa );
+
+        this.context.fillStyle = "rgba( 255, 255, 255, " + self.opa + ")";
         this.context.beginPath();
         this.context.arc( this.get_position().x, this.get_position().y, this.size, 0, Math.PI*2, true);
 
@@ -117,23 +162,40 @@ function Particle( context, boundaries )
 
     };
 
-    this.set_direction = function() {
+
+    this.fade = function( opacity, rate )
+    {
+        return opacity - rate > 0 ? opacity - rate : 0;
+    };
+
+    this.grow = function( size, maxSize, rate )
+    {
+        var gr = rate || 1;
+        return ( size < maxSize ) ? size + gr : size;
+    };
+
+    this.set_direction = function()
+    {
         // make it go on differnt direction
-        if( Math.floor( Math.random() * 2 ) ) {
+        if( Helper.match_probability(50) ) {
             this.animX *= -1;
         }
     };
 
+    this.outsideCanvas = function() 
+    {
+        return this.get_position().x > this.boundaries.x || this.get_position().x < 0  || this.get_position().y > this.boundaries.y;
+    }
+
     this.animate = function() 
     {
-        if( Math.ceil( Math.random() * 20 ) == 20  ) {
+        if( Helper.match_probability(5) ) {
             this.set_direction(); // allow direction to change when comming from top again
         }
         this.set_position( this.get_position().x + this.animX,
-                           this.get_position().y + this.animY );
+                           this.get_position().y - this.animY );
 
-        if( this.get_position().x > this.boundaries.x || this.get_position().x < 0  ||
-            this.get_position().y > this.boundaries.y ) 
+        if( self.outsideCanvas() ) 
         {
                 this.restore();
                 this.set_direction(); // allow direction to change when comming from top again
@@ -142,14 +204,16 @@ function Particle( context, boundaries )
         this.redraw();
     };
 
-    this.create = function() {
-            var x = 200,
-                y = 20;
+    this.create = function( optX, optY )
+    {
+            var x = optX || self.boundaries.x / 2,
+                y = optY || self.boundaries.y - self.maxSize;
+                //y = self.boundaries.y - self.size;
 
            this._position.x = x;
            this._position.y = y;
 
-           self.set_size( 1 );
+           self.set_size( 1 ); // start with the smallest size
            self.set_position( x, y ); // initial position 10 starts on top
            self.redraw();
     };
@@ -161,10 +225,10 @@ function Particle( context, boundaries )
 
 function init()
 {
-    var snow = new Snow(); 
-    var canvas = snow.generate_canvas( document.getElementById('canvasdiv'),
+    var smoke = new Smoke(); 
+    var canvas = smoke.generate_canvas( document.getElementById('canvasdiv'),
                          document.getElementById('canvas') );
 
-    snow.addParticle( canvas.getContext('2d') );
+    //smoke.addParticle( canvas.getContext('2d') );
                          
 }

@@ -122,6 +122,11 @@ function Particle( context, boundaries )
         }
     };
 
+    this.outsideCanvas = function() 
+    {
+        return this.get_position().x > this.boundaries.x || this.get_position().x < 0  || this.get_position().y > this.boundaries.y;
+    };
+
     this.animate = function() 
     {
         if( Math.ceil( Math.random() * 20 ) == 20  ) {
@@ -130,8 +135,7 @@ function Particle( context, boundaries )
         this.set_position( this.get_position().x + this.animX,
                            this.get_position().y + this.animY );
 
-        if( this.get_position().x > this.boundaries.x || this.get_position().x < 0  ||
-            this.get_position().y > this.boundaries.y ) 
+        if( self.outsideCanvas() ) 
         {
                 this.restore();
                 this.set_direction(); // allow direction to change when comming from top again
