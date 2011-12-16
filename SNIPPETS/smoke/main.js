@@ -40,8 +40,6 @@ function Smoke( options )
            p.create( position.X, position.Y );
            this.particles[this.particles.length] = p; 
         }
-
-        loopAnimation();
     }
 
     function loopAnimation()
@@ -78,7 +76,8 @@ function Smoke( options )
     }
 
     (function(){
-       events(); 
+        events(); 
+        loopAnimation();
     })();
 }
 
@@ -229,6 +228,4 @@ function init()
     var canvas = smoke.generate_canvas( document.getElementById('canvasdiv'),
                          document.getElementById('canvas') );
 
-    //smoke.addParticle( canvas.getContext('2d') );
-                         
 }
