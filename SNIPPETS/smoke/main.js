@@ -50,7 +50,8 @@ function Smoke( options )
     function callAnimation()
     {
         eraseCanvas();
-        for( var i=0; i<self.numParticles; i++ ) 
+        var NP = self.particles.length;
+        for( var i=0; i<NP; i++ ) 
         {
             self.particles[i].animate();
         }
