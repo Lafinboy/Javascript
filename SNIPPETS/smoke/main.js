@@ -62,18 +62,23 @@ function Smoke( options )
         self.canvas.width = self.width;
     }
 
-    function mouse_pos( event )
+    function restart( event )
     {
-        self.mousePos = { X: ( event.clientX - self.canvas.offsetLeft ) + window.scrollX, 
-                          Y: ( event.clientY - self.canvas.offsetTop ) + window.scrollY };
-
         self.particles = [];
         self.addParticle( self.canvas.getContext("2d"), self.mousePos ); 
     }    
 
+    function update_position( event )
+    {
+        self.mousePos = { X: ( event.clientX - self.canvas.offsetLeft ) + window.scrollX, 
+                          Y: ( event.clientY - self.canvas.offsetTop ) + window.scrollY };
+    }
+
     function events()
     {
-        window.addEventListener("click", mouse_pos, false );
+        window.addEventListener("mousemove", update_position, false );
+        window.addEventListener("click", restart, false );
+        window.setInterval( restart, 1500 );
     }
 
     (function(){
