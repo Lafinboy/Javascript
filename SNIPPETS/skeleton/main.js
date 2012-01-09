@@ -2,7 +2,7 @@
  * Mitermayer Reis
  * mitermayer.reis@gmail.com
  * -----------------------------------------------------
- * Skeleton frame for canvas animations and experiments
+ * Skeleton frame for canvas Stageations and experiments
  * version: 0.1  ----- 20/12/2011
  * -----------------------------------------------------
  */
@@ -14,13 +14,13 @@ var Helper = {
     }
 };
 
-function Anim( options )
+function Stage( options )
 {
     var self = this;
 
-    this.numParticles = 1; // sets how many animated item will exist
+    this.numParticles = 1; // sets how many Stageated item will exist
     this.particles = [];
-    this.running_animation = null;
+    this.running_Stageation = null;
     this.mousePos = { X: null, Y: null };
 
     this.generate_canvas = function( container, holder ) 
@@ -53,18 +53,18 @@ function Anim( options )
         }
     }
 
-    function loopAnimation()
+    function loopStageation()
     {
-        self.running_animation = window.setInterval( callAnimation, 50 );
+        self.running_Stageation = window.setInterval( callStageation, 50 );
     }
 
-    function callAnimation()
+    function callStageation()
     {
         eraseCanvas();
         var NP = self.particles.length;
         for( var i=0; i<NP; i++ ) 
         {
-            self.particles[i].animate();
+            self.particles[i].Stageate();
         }
     }
 
@@ -96,7 +96,7 @@ function Anim( options )
         self.generate_canvas( options.container_parent, options.container );
         restart(); // draw item at least once
         events(); // setup events 
-        loopAnimation(); // call main loop
+        loopStageation(); // call main loop
     })();
 }
 
@@ -170,9 +170,9 @@ function Particle( context, boundaries )
         return this.get_position().x > this.boundaries.x || this.get_position().x < 0  || this.get_position().y > this.boundaries.y;
     }
 
-    this.animate = function() 
+    this.Stageate = function() 
     {
-        // change state of the animation in here so 
+        // change state of the Stageation in here so 
         // that it will be updated in each frame
         this.redraw();
     };
@@ -198,7 +198,7 @@ function Particle( context, boundaries )
 
 function init()
 {
-    var anim = new Anim({
+    var stage = new Stage({
         container_parent: document.getElementById('canvasdiv'), 
         container: document.getElementById('canvas')
     }); 
