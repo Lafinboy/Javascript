@@ -53,34 +53,37 @@ THE SOFTWARE.
     var checkbox = function(arr) {
     // creates an element eg : <span id="custom-email" class="customForm-checkbox" >Email</span>
 
-        $(arr).each( function() 
-        {
+        $(arr).each( function() {  
 
-          var $currentElement = this, // creates a reference the input element
-              newId = settings.prefix + ( $currentElement.attr('name') || $currentElement.attr('id') );  // generate id based on name or id of the elment
-
+          var currentElement = this; // creates a reference to this element          
+          var newId = settings.prefix + ( $(currentElement).attr('name') || $(currentElement).attr('id') );  // generate id based on name or id of the elment
+           
           // generate the custom new elements before the element
-          $currentElement.before( $( "<" + settings.box +"/>", { 
+          $(this).before( $( "<" + settings.box +"/>", { 
                 id: newId, 
                 "class": settings.prefix + "checkbox", 
                 click: function(e) {
                     e.preventDefault(); // in case of settings.box as an a tag, prevent it to procced
                     
                     $(this).toggleClass('checked'); 
-                    var checked = $(this).hasClass('checked') ? 'checked' : ''; 
-                    $currentElement.attr('checked', checked);
+                    
+                    if ( $(this).hasClass('checked') ) {
+                        $(currentElement).attr('checked', 'checked');
+                    } else {
+                        $(currentElement).attr('checked', '');
+                    }
                 }
           }));
 
           // in case a form was submitted to save the state of the currently checked button
-          if ( $currentElement.attr('checked') ) {
-            $('#' + newId).addClass('checked');
+          if ( $(currentElement).attr('checked') ) {
+            var newElementId = '#' + newId;
+            $(newElementId).addClass('checked');
           }
           
           // hides this element
-          $currentElement.addClass('customForm-hidden');
+          $(this).addClass('customForm-hidden');
         });
-
     };
     
     var radio = function(arr) {
