@@ -9,7 +9,13 @@ body, html {
     left: -99999px;
 }
 */
-
+#custom-upfile {
+    background: white;
+    border: 1px solid black;
+    width: 300px;
+    height: 30px;
+    display: block;
+}
 #custom-sex-select {
 	background: green;
 	width: 100px;
