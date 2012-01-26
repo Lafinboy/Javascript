@@ -67,8 +67,12 @@ THE SOFTWARE.
                      'opacity': '0',
                      'filter': 'alpha(opacity=0)',
                      '-moz-opacity': '0',
-                     '-khtml-opacity': '0'
+                     '-khtml-opacity': '0',
+                     'position': 'absolute',
+                     'top': '0px',
+                     'left': '0px'
                 }); 
+
             }
             else 
             {
@@ -155,7 +159,7 @@ THE SOFTWARE.
           
           $(radios).each( function() { 
               var $curEle = this, // creates a reference to this element          
-                  newId = core.generate_id( $curEle );
+                  newId = core.generate_id( $curEle ) + '-' + $curEle.val();
                             
               // generate the custom new elements before the element
               $curEle.before( $( "<" + defaults.box +"/>", { 
@@ -178,7 +182,7 @@ THE SOFTWARE.
               $('#' + newId).addClass(defaults.prefix + $curEle.attr('name'));
             
               // in case a form was submitted to save the state of the currently checked button
-              if ( $curEle.attr('checked') ) {
+              if ( $curEle.prop('checked') ) {
                 $('#' + newId).addClass('checked');                
               }
               
@@ -199,7 +203,8 @@ THE SOFTWARE.
             core.hide_element( $(this), true );
             
             $curEle.before( $( "<" + defaults.wrappper +"/>", { 
-                    id: newId + "-container"
+                    id: newId + "-container",
+                    "class": defaults.prefix + 'file-container'
             }));
            
             $(containerId).css('position', 'relative');
@@ -212,10 +217,6 @@ THE SOFTWARE.
             }).appendTo(containerId);
             
             $(fileId).html($('input[type=file]').val().split('\\').pop()); // this is where the text will be done
-            
-            $curEle.css('position', 'absolute');
-            $curEle.css('top', '0px');
-            $curEle.css('left', '0px');
             
             $curEle.change(function() {
                 // this is the event to update file text
@@ -236,24 +237,24 @@ THE SOFTWARE.
             core.hide_element( $(this), true );
             
             $curEle.before( $( "<" + defaults.wrappper +"/>", { 
-                    id: newId + "-container"
+                    id: newId + "-container",
+                    "class": defaults.prefix + 'select-container'
             }));
            
             $(containerId).css('position', 'relative');
            
             $curEle.appendTo(containerId); // moves the selectbox to this container
             
+            // create holding contairner
             $("<" + defaults.box +"/>", {
               "class": defaults.prefix + "select", 
               id: newId
             }).appendTo(containerId);
             
+            // get starting text
             $(selctId).html($(containerId + " option:selected").text());
-            
-            $curEle.css('position', 'absolute');
-            $curEle.css('top', '0px');
-            $curEle.css('left', '0px');
-            
+
+            // update text
             $curEle.change(function() {
                 $(selctId).html($(containerId + " option:selected").text());
             });
@@ -264,8 +265,13 @@ THE SOFTWARE.
         // check to for object, if it exists start the pluggin, else return
         if ( $arr.length ) 
         {
+            // overwritte defaults with options 
             defaults = options ? $.extend({}, defaults, options) : defaults;
-            $arr = $arr.is('form') ? $('form').find(":input") : $arr;                   
+
+            // in case of trying the general ('form') get all form fields
+            $arr = $arr.is('form') ? $('form').find(":input") : $arr; 
+
+            //load the modules                  
             core.load_modules( core.sort_elements( $arr ) );                   
         }
     }( options, $arr ));
