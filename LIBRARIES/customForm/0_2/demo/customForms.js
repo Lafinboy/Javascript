@@ -76,7 +76,7 @@ THE SOFTWARE.
           }));
 
           // in case a form was submitted to save the state of the currently checked button
-          if ( $(currentElement).attr('checked') ) {
+          if ( $(currentElement).prop('checked') ) {
             var newElementId = '#' + newId;
             $(newElementId).addClass('checked');
           }
