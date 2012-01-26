@@ -68,9 +68,9 @@ THE SOFTWARE.
                     $(this).toggleClass('checked'); 
                     
                     if ( $(this).hasClass('checked') ) {
-                        $(currentElement).attr('checked', 'checked');
+                        $(currentElement).prop('checked', true);
                     } else {
-                        $(currentElement).attr('checked', '');
+                        $(currentElement).prop('checked', false);
                     }
                 }
           }));
