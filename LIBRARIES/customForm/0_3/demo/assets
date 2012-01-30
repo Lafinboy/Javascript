@@ -1,0 +1,207 @@
+function CheckboxGroup( $container, $indicator )
+{
+    /*  expects a jquery dom object with the container
+     * that can be jQuery('#myform') and the indicator that will
+     * update the results of selection eg: jQuery('#indicator) */
+
+  var self = this; // default scope
+
+
+  self.$wrapper = false; // will be created dynamicly
+  self.$container = $container; 
+  //self.$indicator = $indicator;
+  self.defaultText = "select..";
+  self.$indicator = createIndicator(); 
+  self.count = 0; // number of selected fields
+  self.ctrl_key_pressed = false;
+
+  function createIndicator()
+  {
+    var newId = self.$container.attr('id') + '_indicator'; 
+    var wrapperId = newId + "_container";
+    self.$container.before( "<div id='" + wrapperId + "'><span id='" + newId + "'>" + self.defaultText +"</span></div>" );
+    
+    self.$wrapper = jQuery('#' + wrapperId ); // asign wrapper 
+
+    return jQuery('#' + newId );
+  }
+
+  function setVal( val )
+  {
+    /* updates value of the indicator */
+    self.$indicator.html( val );
+  }
+
+  function getLabel( $input )
+  {
+        var input = $input.attr('id')
+        $label = self.$container.find('label:[for=' + input + ']');
+
+        return $label;
+  }
+
+  function getInput( labelFor )
+  {
+    /* returns the input match based on the label
+       tries to get element with same id as the for attribute
+       verflow-y:
+       if cant find one try to get a match with name attribute
+       or return false */
+       var $input = document.getElementById( labelFor ) 
+                   ? jQuery( jQuery( '#' + labelFor ) ) 
+                   : jQuery('input[name=' + labelFor + ']'); 
+
+       return $input.length ? $input : false;
+  }
+
+  function toogleCheck( $input, $label )
+  {
+    /* check or uncheck the input and 
+       return a boolean with the final result */
+    var checkStats = false;
+
+    if( $input.is(':checked')  )
+    {
+       $input.attr('checked', false);
+       $label.removeClass('checked');
+    }
+    else 
+    {
+       $input.attr('checked', 'checked');
+       $label.addClass('checked');
+       checkStats = true;
+    }
+
+    return checkStats;
+  }
+
+  function uncheckAll()
+  {
+    /* unselect all checkbox from the container */
+    self.count = 0;
+    self.$container.find('label.checked').removeClass('checked');
+    var $inputs = self.$container.find('input:checkbox');
+    jQuery.each( $inputs, function(){
+      jQuery(this).attr('checked', false).addClass('groupCheckbox');
+    });
+  }
+
+  function updateCounter( stats )
+  {
+    if( stats ) 
+    {
+        self.count++;
+    }
+    else {
+        self.count--;
+        self.count = self.count < 0 ? self.count = 0 : self.count;
+    }
+  }
+
+  function updateText( text, stats )
+  {
+    var newText = text;
+
+      if( self.count )
+      {
+        if( self.count == 1 )
+        {
+          if( !stats )
+          {
+            /* get the only element that still checked */
+            var input = self.$container.find('.groupCheckbox:checked').attr('id')
+            newText = self.$container.find('label:[for=' + input + ']').html();
+          }
+        }
+        else {
+          newText = self.count + ' selected'; 
+        }
+      } 
+      else 
+      {
+        newText = self.defaultText;
+      }
+
+    return newText;
+  }
+
+  function check_ctrl_pressed( event )
+  {
+    return event.which == 17;
+  }
+
+  function containerToogle()
+  {
+      self.$container.slideToggle(100);
+  }
+
+  function events()
+  {
+    /* attachs events */
+
+    self.$container.find('label').click(function(e){
+      e.stopPropagation();
+      e.preventDefault(); // block browser default of selecting
+      if( !self.ctrl_key_pressed ) 
+      {
+        uncheckAll( self.$container );
+      }
+      var text = jQuery(this).html();
+      var $input = getInput( jQuery(this).attr('for') );
+      var checkStats = toogleCheck( $input, jQuery(this) );
+
+      updateCounter( checkStats );
+      text = updateText( text, checkStats );
+
+      setVal( text );
+    });
+
+    self.$wrapper.click(function(e){
+      e.stopPropagation();
+
+      if( jQuery(this).attr('id') == 'Form_SearchForm_Sport_indicator_container' ) {
+          jQuery('#Form_SearchForm_Network').hide();
+      }
+
+      else {
+          jQuery('#Form_SearchForm_Sport').hide();
+      }
+        
+      containerToogle();
+
+    });
+
+    jQuery('body').click(function(event){
+        self.$container.slideUp(100);
+    });
+
+    jQuery( window )
+    .keydown(function(event) {
+      self.ctrl_key_pressed = check_ctrl_pressed( event ); 
+    })
+    .keyup(function(event) {
+      self.ctrl_key_pressed = false; 
+    });
+
+  }
+
+  (function(){
+    /* init */
+    uncheckAll( self.$container );
+    events();
+  }());
+
+}
+
+var checkboxgroup = function()
+{
+    /* instantiate the checkboxgroups if we are on the page */
+    var sports_opt = { container: jQuery('#Form_SearchForm_Sport'), indicator: jQuery('label:[for=Form_SearchForm_Sport]') };
+    var channel_opt = { container: jQuery('#Form_SearchForm_Network'), indicator: jQuery('label:[for=Form_SearchForm_Network]') };
+
+    if( !sports_opt.container.length || !channel_opt.container.length ) return; // It means we are not on the program finder page
+
+    var sports = new CheckboxGroup( sports_opt.container, sports_opt.indicator );
+    var channel = new CheckboxGroup( channel_opt.container, channel_opt.indicator );
+
+};
