@@ -51,8 +51,10 @@ THE SOFTWARE.
         wrappper       : 'div',
         prefix         : 'custom-',
         text: {
-            prefix: "Please enter ",
-            suffix: "..",
+            prefix: 0,
+            suffix: 1,
+            prefix_txt: "Please enter ",
+            suffix_txt: "..",
             customText: 
             {
                 // example 
@@ -89,9 +91,33 @@ THE SOFTWARE.
                 $(this).hide();
             }
         },
+        convert_to_name: function( str )
+        {
+            // convert firstName FirstName first-name FIRST NAME to: First Name..
+            // Also capitalize first letter in case of email : Email..
+            // full name : Fullname..
+            
+            // check for capitalized letters
+            // replace separators '-', '_', '.', ':'  for ' ' -> valid id, name separators
+            // http://www.w3.org/TR/html401/types.html#type-cdata
+            // Capitalize the first Letter
+            // return string
+            //var separators = /[\:._-]/g, jquery only allow '-' and '_' as separators
+            
+            var separators = /[\:._-]/g,
+                s = str;
+                
+                s = str.replace( separators, " ");
+                s = s.toLowerCase();
+                s = s.split("");
+                s[0] = s[0].toUpperCase();
+                s = s.join("")
+
+                return s;
+        },
         get_alphanumeric: function( str ) 
         {
-            var alphanumeric = /([^a-zA-Z_\s0-9])*/g;
+            var alphanumeric = /[^a-zA-Z_\s0-9]*/g;
             return $.trim( str.replace( alphanumeric, "") );
         },
         sort_elements: function( $arr )
@@ -144,8 +170,26 @@ THE SOFTWARE.
                 defaultVal, 
                 name = $curEle.attr('name'),
                 text = ( $('label[for='+name+']').length ) 
-                     ? defaults.text.prefix + core.get_alphanumeric( $('label[for='+name+']').text() ) + defaults.text.suffix
-                     : defaults.text.prefix + core.get_alphanumeric( name ) + defaults.text.suffix;
+                     ? $('label[for='+name+']').text()  
+                     : name;
+
+
+
+            // split name based on separators like '-' and '_'
+            text = core.convert_to_name( text );
+
+            // remoev weird caracters that may be on the lable like * ! or anythingg
+            text = core.get_alphanumeric( text );
+
+            // add prefix
+            text = ( defaults.text.prefix ) 
+                 ? defaults.text.prefix_txt + text 
+                 : text;
+
+            // add suffix
+            text = ( defaults.text.suffix ) 
+                 ? text + defaults.text.suffix_txt 
+                 : text;
 
             $curEle.val( text );
             _defaultVal[name] = text;
