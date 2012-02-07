@@ -33,6 +33,14 @@ THE SOFTWARE.
   Or just set it auto for every element
   // $('form').cstmForm();
 
+
+  textfields ( text, email, tel, password )
+  data-cstText -
+  data-cstPrefix -
+  data-cstSuffix -
+  data-cstClass -
+
+
 */
 (function( $ ){
   
@@ -45,14 +53,16 @@ THE SOFTWARE.
     {
     
         // box      :  the element that will be created as the custom replacement element.
-        // wrapper  :  wrapper for the select box
+        // wrapper  :  wrapper for the select box, and file
         // forms    :  pass id of the object as #id or it will search for all forms
         box            : 'a',
         wrappper       : 'div',
         prefix         : 'custom-',
+        // Auto hide the styled elemtns
+        autoHide       : 1,
         text: {
             prefix: 0,
-            suffix: 1,
+            suffix: 0,
             prefix_txt: "Please enter ",
             suffix_txt: "..",
             customText: 
@@ -163,14 +173,19 @@ THE SOFTWARE.
 
     text = function(arr)
     {
+        // 1 - check for data-cstText
+        // 2 - check for data-autoClear ( on click remove all data, on blur if empty restore previous )
+        // 3 - if no data-cstText use the value from the input 
+        // 4 - add new text with prefix and suffix 
+
         var _defaultVal = {}; // store all the defaults to do a quick validation
 
         $(arr).each( function() {  
             var $curEle = this,
                 defaultVal, 
                 name = $curEle.attr('name'),
-                text = ( $('label[for='+name+']').length ) 
-                     ? $('label[for='+name+']').text()  
+                text = ( $curEle.attr('data-cstText') )
+                     ? $curEle.attr('data-cstText') 
                      : name;
 
 
@@ -335,7 +350,7 @@ THE SOFTWARE.
                 containerId = '#' + newId + "-container",
                 selctId = '#' + newId;
             
-            core.hide_element( $(this), true );
+            core.hide_element( $curEle, true );
             
             $curEle.before( $( "<" + defaults.wrappper +"/>", { 
                     id: newId + "-container",
