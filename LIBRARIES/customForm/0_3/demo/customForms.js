@@ -49,18 +49,28 @@ THE SOFTWARE.
         
     var $arr = this, // forms that will be affected, can be an array or a single object   
 
-    defaults = 
+    settings = 
     {
-    
-        // box      :  the element that will be created as the custom replacement element.
-        // wrapper  :  wrapper for the select box, and file
-        // forms    :  pass id of the object as #id or it will search for all forms
-        box            : 'a',
-        wrappper       : 'div',
-        prefix         : 'custom-',
-        // Auto hide the styled elemtns
-        autoHide       : 1,
+        // Global settings
+        customEle      : 'a',
+        containerEle   : 'div',
+        classPrefix    : 'custom-',
+        autoHide       : 1, // auto hide the stylized element
+        active         : 0, // oad all custom form 
+        select: {
+            active: 1,
+        },
+        radio: {
+            active: 1,
+        },
+        checkbox: {
+            active: 1,
+        },
+        file: {
+            active: 1,
+        },
         text: {
+            active: 1,
             prefix: 0,
             suffix: 0,
             prefix_txt: "Please enter ",
@@ -78,7 +88,7 @@ THE SOFTWARE.
     {
         generate_id: function( $elem )
         {
-            return defaults.prefix + ( $elem.attr('name') || $elem.attr('id') ); // generate id based on name or id of the elment
+            return settings.classPrefix + ( $elem.attr('name') || $elem.attr('id') ); // generate id based on name or id of the elment
         },
         hide_element: function( $elem, transparent )
         {
@@ -177,114 +187,121 @@ THE SOFTWARE.
         // 2 - check for data-autoClear ( on click remove all data, on blur if empty restore previous )
         // 3 - if no data-cstText use the value from the input 
         // 4 - add new text with prefix and suffix 
+        if( settings.text.active || settings.active )
+        {
+            var _defaultVal = {}; // store all the settings to do a quick validation
 
-        var _defaultVal = {}; // store all the defaults to do a quick validation
+            $(arr).each( function() {  
 
-        $(arr).each( function() {  
-            var $curEle = this,
-                defaultVal, 
-                name = $curEle.attr('name'),
-                text = ( $curEle.attr('data-cstText') )
-                     ? $curEle.attr('data-cstText') 
-                     : name;
-
+                var $curEle = this,
+                    defaultVal, 
+                    name = $curEle.attr('name'),
+                    text = ( $curEle.attr('data-cstText') )
+                         ? $curEle.attr('data-cstText') 
+                         : name;
 
 
-            // split name based on separators like '-' and '_'
-            text = core.convert_to_name( text );
+                // split name based on separators like '-' and '_'
+                text = core.convert_to_name( text );
 
-            // remoev weird caracters that may be on the lable like * ! or anythingg
-            text = core.get_alphanumeric( text );
+                // remove weird caracters that may be on the lable like * ! or anythingg
+                text = core.get_alphanumeric( text );
 
-            // add prefix
-            text = ( defaults.text.prefix ) 
-                 ? defaults.text.prefix_txt + text 
-                 : text;
+                // add prefix
+                text = ( settings.text.prefix ) 
+                     ? settings.text.prefix_txt + text 
+                     : text;
 
-            // add suffix
-            text = ( defaults.text.suffix ) 
-                 ? text + defaults.text.suffix_txt 
-                 : text;
+                // add suffix
+                text = ( settings.text.suffix ) 
+                     ? text + settings.text.suffix_txt 
+                     : text;
 
-            $curEle.val( text );
-            _defaultVal[name] = text;
+                $curEle.val( text );
+                _defaultVal[name] = text;
 
-            $curEle.focusin(
-                function()
-                {
-                    if( $.trim( $curEle.val() ) == _defaultVal[name] )
+                $curEle.focusin(
+                    function()
                     {
-                        $curEle.val("");
-                    } 
-                }
-            )
-            .focusout(
-                function()
-                {
-                    if( $.trim( $curEle.val() ) == "" )
-                    {
-                        $curEle.val( _defaultVal[name] );
+                        if( $.trim( $curEle.val() ) == _defaultVal[name] )
+                        {
+                            $curEle.val("");
+                        } 
                     }
-                }
-            );
-
-        });
+                )
+                .focusout(
+                    function()
+                    {
+                        if( $.trim( $curEle.val() ) == "" )
+                        {
+                            $curEle.val( _defaultVal[name] );
+                        }
+                    }
+                );
+            });
+        }
     },
         
     checkbox = function(arr) 
     {
     // creates an element eg : <span id="custom-email" class="customForm-checkbox" >Email</span>
+        if( settings.checkbox.active || settings.active )
+        {
 
-        $(arr).each( function() {  
+            $(arr).each( function() {  
 
-          var $curEle = this, // creates a reference to this element          
-              newId = core.generate_id( $curEle );
-           
-          // generate the custom new elements before the element
-          $curEle.before( $( "<" + defaults.box +"/>", { 
-                id: newId, 
-                "class": defaults.prefix + "checkbox", 
-                click: function(e) {
-                    e.preventDefault(); // in case of defaults.box as an a tag, prevent it to procced
-                    
-                    $(this).toggleClass('checked'); 
-                    
-                    if ( $(this).hasClass('checked') ) {
-                        $curEle.prop('checked', true);
-                    } else {
-                        $curEle.prop('checked', false);
+              var $curEle = this, // creates a reference to this element          
+                  newId = core.generate_id( $curEle );
+               
+              // generate the custom new elements before the element
+              $curEle.before( $( "<" + settings.customEle +"/>", { 
+                    id: newId, 
+                    "class": settings.classPrefix + "checkbox", 
+                    click: function(e) {
+                        e.preventDefault(); // in case of settings.customEle as an a tag, prevent it to procced
+                        
+                        $(this).toggleClass('checked'); 
+                        
+                        if ( $(this).hasClass('checked') ) {
+                            $curEle.prop('checked', true);
+                        } else {
+                            $curEle.prop('checked', false);
+                        }
                     }
-                }
-          }));
+              }));
 
-          // in case a form was submitted to save the state of the currently checked button
-          if ( $curEle.prop('checked') ) {
-            var newElementId = '#' + newId;
-            $(newElementId).addClass('checked');
-          }
-          
-          // hides this element
-          $curEle.addClass('customForm-hidden');
-        });
+              // in case a form was submitted to save the state of the currently checked button
+              if ( $curEle.prop('checked') ) {
+                var newElementId = '#' + newId;
+                $(newElementId).addClass('checked');
+              }
+              
+              // hides this element
+              $curEle.addClass('customForm-hidden');
+            });
+
+        }
     },
     
     radio = function(arr) 
     {
-    
-          var radios = arr; // create a reference to radios
-          
-          $(radios).each( function() { 
+        if( settings.radio.active || settings.active )
+        {
+
+            var radios = arr; // create a reference to radios
+
+            $(radios).each( function() { 
               var $curEle = this, // creates a reference to this element          
                   newId = core.generate_id( $curEle ) + '-' + $curEle.val();
                             
               // generate the custom new elements before the element
-              $curEle.before( $( "<" + defaults.box +"/>", { 
+              $curEle.before( $( "<" + settings.customEle +"/>", { 
                     id: newId, 
-                    "class": defaults.prefix + "radio", 
+                    "class": settings.classPrefix + "radio", 
                     click: function(e) {
-                        e.preventDefault(); // in case of defaults.box as an a tag, prevent it to procced
+                        e.preventDefault(); // in case of settings.customEle as an a tag, prevent it to procced
                         
-                        $("." + defaults.prefix + "radio").removeClass('checked');
+                        $("." + settings.classPrefix + "radio").removeClass('checked');
                         $(this).addClass('checked');
                         
                         // loop all and remove the 
@@ -295,8 +312,8 @@ THE SOFTWARE.
                     }
               }));
               
-              $('#' + newId).addClass(defaults.prefix + $curEle.attr('name'));
-            
+              $('#' + newId).addClass(settings.classPrefix + $curEle.attr('name'));
+
               // in case a form was submitted to save the state of the currently checked button
               if ( $curEle.prop('checked') ) {
                 $('#' + newId).addClass('checked');                
@@ -304,85 +321,94 @@ THE SOFTWARE.
               
               // hides this element
               $curEle.addClass('customForm-hidden');
-         });
+            });
+
+        }
     },
     
     file = function(arr) {        
+        if( settings.file.active || settings.active )
+        {
         
-        $(arr).each( function() { 
-        
-            var $curEle = this,
-                newId = core.generate_id( $curEle ),
-                containerId = '#' + newId + "-container",
-                fileId = '#' + newId;
+            $(arr).each( function() { 
             
-            core.hide_element( $(this), true );
-            
-            $curEle.before( $( "<" + defaults.wrappper +"/>", { 
-                    id: newId + "-container",
-                    "class": defaults.prefix + 'file-container'
-            }));
-           
-            $(containerId).css('position', 'relative');
-           
-            $curEle.appendTo(containerId);
-            
-            $("<" + defaults.box +"/>", {
-              "class": defaults.prefix + "file", 
-              id: newId
-            }).appendTo(containerId);
-            
-            $(fileId).html($('input[type=file]').val().split('\\').pop()); // this is where the text will be done
-            
-            $curEle.change(function() {
-                // this is the event to update file text
-                $(fileId).html($('input[type=file]').val().split('\\').pop());
+                var $curEle = this,
+                    newId = core.generate_id( $curEle ),
+                    containerId = '#' + newId + "-container",
+                    fileId = '#' + newId;
+                
+                core.hide_element( $(this), true );
+                
+                $curEle.before( $( "<" + settings.containerEle +"/>", { 
+                        id: newId + "-container",
+                        "class": settings.classPrefix + 'file-container'
+                }));
+               
+                $(containerId).css('position', 'relative');
+               
+                $curEle.appendTo(containerId);
+                
+                $("<" + settings.customEle +"/>", {
+                  "class": settings.classPrefix + "file", 
+                  id: newId
+                }).appendTo(containerId);
+                
+                $(fileId).html($('input[type=file]').val().split('\\').pop()); // this is where the text will be done
+                
+                $curEle.change(function() {
+                    // this is the event to update file text
+                    $(fileId).html($('input[type=file]').val().split('\\').pop());
+                });
             });
-        });
+        }
     },
 
     select = function(arr) {        
-        
-        $(arr).each( function() { 
-        
-            var $curEle = this,
-                newId = core.generate_id( $curEle ),
-                containerId = '#' + newId + "-container",
-                selctId = '#' + newId;
-            
-            core.hide_element( $curEle, true );
-            
-            $curEle.before( $( "<" + defaults.wrappper +"/>", { 
-                    id: newId + "-container",
-                    "class": defaults.prefix + 'select-container'
-            }));
-           
-            $(containerId).css('position', 'relative');
-           
-            $curEle.appendTo(containerId); // moves the selectbox to this container
-            
-            // create holding contairner
-            $("<" + defaults.box +"/>", {
-              "class": defaults.prefix + "select", 
-              id: newId
-            }).appendTo(containerId);
-            
-            // get starting text
-            $(selctId).html($(containerId + " option:selected").text());
 
-            // update text
-            $curEle.change(function() {
+        if( settings.select.active || settings.active )
+        {
+            $(arr).each( function() { 
+            
+                var $curEle = this,
+                    newId = core.generate_id( $curEle ),
+                    containerId = '#' + newId + "-container",
+                    selctId = '#' + newId;
+                
+                core.hide_element( $curEle, true );
+                
+                $curEle.before( $( "<" + settings.containerEle +"/>", { 
+                        id: newId + "-container",
+                        "class": settings.classPrefix + 'select-container'
+                }));
+               
+                $(containerId).css('position', 'relative');
+               
+                $curEle.appendTo(containerId); // moves the selectbox to this container
+                
+                // create holding contairner
+                $("<" + settings.customEle +"/>", {
+                  "class": settings.classPrefix + "select", 
+                  id: newId
+                }).appendTo(containerId);
+                
+                // get starting text
                 $(selctId).html($(containerId + " option:selected").text());
+
+                // update text
+                $curEle.change(function() {
+                    $(selctId).html($(containerId + " option:selected").text());
+                });
             });
-        });
+        }
+
     };
     
     (function( options, $arr ) {        
         // check to for object, if it exists start the pluggin, else return
         if ( $arr.length ) 
         {
-            // overwritte defaults with options 
-            defaults = options ? $.extend({}, defaults, options) : defaults;
+            // overwritte settings with options 
+            settings = options ? $.extend({}, settings, options) : settings;
 
             // in case of trying the general ('form') get all form fields
             $arr = $arr.is('form') ? $('form').find(":input") : $arr; 
