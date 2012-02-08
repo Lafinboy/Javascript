@@ -56,7 +56,7 @@ THE SOFTWARE.
         containerEle   : 'div',
         classPrefix    : 'custom-',
         autoHide       : 1, // auto hide the stylized element
-        active         : 0, // oad all custom form 
+        active         : 0, // load all custom form 
         select: {
             active: 1,
         },
