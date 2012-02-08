@@ -76,12 +76,6 @@ THE SOFTWARE.
  * >          suffix: 0,
  * >          prefix_txt: "Please enter ",
  * >          suffix_txt: "..",
- * >          customText: 
- * >          {
- * >              // example 
- * >              // name: "Enter your name"
- * >          },
- * >          callback: function(){}
  * >      }
  * >  }
  *
@@ -117,17 +111,11 @@ THE SOFTWARE.
             active: 1,
         },
         text: {
-            active: 1,
+            active: 0,
             prefix: 0,
             suffix: 0,
             prefix_txt: "Please enter ",
             suffix_txt: "..",
-            customText: 
-            {
-                // example 
-                // name: "Enter your name"
-            },
-            callback: function(){}
         }
     },
 
@@ -245,10 +233,6 @@ THE SOFTWARE.
 
     text = function(arr)
     {
-        // 1 - check for data-cstText
-        // 2 - check for data-autoClear ( on click remove all data, on blur if empty restore previous )
-        // 3 - if no data-cstText use the value from the input 
-        // 4 - add new text with prefix and suffix 
         if( settings.text.active || settings.active )
         {
             var _defaultVal = {}; // store all the settings to do a quick validation
@@ -469,6 +453,13 @@ THE SOFTWARE.
                     selctId = '#' + newId;
                 
                 core.hide_element( $curEle, true );
+
+                
+                // Fix for mac to be able to change the height of select box
+                $curEle.css({
+                    '-webkit-appearance': 'none',
+                    '-moz-appearance': 'none'
+                });
                 
                 $curEle.before( $( "<" + settings.containerEle +"/>", { 
                         id: newId + "-container",
