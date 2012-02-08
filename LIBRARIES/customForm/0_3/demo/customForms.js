@@ -22,28 +22,68 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ---------------------------------------------------------------------------
-
- USE LIKE THIS:
-  
-  To get just some elements:
-  // $('select').cstmForm();  
-  // $('input[type=radio];  
-  // $('input[type=radio], input[type=checkbox], select').cstmForm();
-  
-  Or just set it auto for every element
-  // $('form').cstmForm();
-
-
-  textfields ( text, email, tel, password )
-  data-cstText -
-  data-cstPrefix -
-  data-cstSuffix -
-  data-cstClass -
-
-
 */
 (function( $ ){
-  
+/*
+ * Class: cstmForm
+ *
+ * Function: cstmForm
+ * 
+ * DEFAULTS:
+ *    settings - Default options 
+ * >  settings = 
+ * >  {
+ * >      customEle      : 'a',
+ * >      containerEle   : 'div',
+ * >      classPrefix    : 'custom-',
+ * >      autoHide       : 1, // auto hide the stylized element
+ * >      active         : 0, // oad all custom form 
+ * >      select: {
+ * >          active: 1,
+ * >      },
+ * >      radio: {
+ * >          active: 1,
+ * >      },
+ * >      checkbox: {
+ * >          active: 1,
+ * >      },
+ * >      file: {
+ * >          active: 1,
+ * >      },
+ * >      text: {
+ * >          active: 1,
+ * >          prefix: 0,
+ * >          suffix: 0,
+ * >          prefix_txt: "Please enter ",
+ * >          suffix_txt: "..",
+ * >          customText: 
+ * >          {
+ * >              // example 
+ * >              // name: "Enter your name"
+ * >          },
+ * >          callback: function(){}
+ * >      }
+ * >  }
+ * 
+ *
+ *  Usage:
+ *
+ *  *All Form elements:* 
+ *  >   $('form').cstmForm() 
+ *  *Select:* 
+ *  >   $('select').cstmForm() 
+ *  *Radio:* 
+ *   >   $('input[type=radio]).cstmForm()
+ *  *Radio, checkbox, select:* 
+ *   >    $('input[type=radio], input[type=checkbox], select').cstmForm()
+ *
+ * Parameters:
+ *
+ *    options - object 
+ *    - *Example* :
+ * > $('form').cstmForm({ customEle: 'span' });
+ *       
+ */
   $.fn.cstmForm = function( options ) 
   {
         
@@ -51,12 +91,11 @@ THE SOFTWARE.
 
     settings = 
     {
-        // Global settings
         customEle      : 'a',
         containerEle   : 'div',
         classPrefix    : 'custom-',
         autoHide       : 1, // auto hide the stylized element
-        active         : 0, // load all custom form 
+        active         : 0, // oad all custom form 
         select: {
             active: 1,
         },
