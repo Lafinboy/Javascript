@@ -2,7 +2,7 @@
 
 Version: 0.3
 
-Copyright (C) 2011 by Mitermayer Reis
+Copyright (C) 2012 by Mitermayer Reis
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ---------------------------------------------------------------------------
+
 */
 (function( $ ){
 /*
- * Class: cstmForm
  *
- * Function: cstmForm
- * 
+ * Class: cstmForm
+ * Custom forms will make it easier to stylize form fields
+ *
+ *  Usage:
+ *
+ *  *All Form elements:* 
+ *  >   $('form').cstmForm() 
+ *  *Select:* 
+ *  >   $('select').cstmForm() 
+ *  *Radio:* 
+ *   >   $('input[type=radio]).cstmForm()
+ *  *Radio, checkbox, select:* 
+ *   >    $('input[type=radio], input[type=checkbox], select').cstmForm()
+ *
  * DEFAULTS:
  *    settings - Default options 
  * >  settings = 
@@ -64,18 +76,6 @@ THE SOFTWARE.
  * >          callback: function(){}
  * >      }
  * >  }
- * 
- *
- *  Usage:
- *
- *  *All Form elements:* 
- *  >   $('form').cstmForm() 
- *  *Select:* 
- *  >   $('select').cstmForm() 
- *  *Radio:* 
- *   >   $('input[type=radio]).cstmForm()
- *  *Radio, checkbox, select:* 
- *   >    $('input[type=radio], input[type=checkbox], select').cstmForm()
  *
  * Parameters:
  *
@@ -123,6 +123,12 @@ THE SOFTWARE.
         }
     },
 
+ /*
+  *
+  * Function: core
+  *
+  * Parameters:
+  */
     core = 
     {
         generate_id: function( $elem )
