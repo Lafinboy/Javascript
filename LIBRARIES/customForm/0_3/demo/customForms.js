@@ -28,7 +28,9 @@ THE SOFTWARE.
 /*
  *
  * Class: cstmForm
- * *Custom Forms* will make it easier to stylize form fields with support to
+ * *Custom Forms* is a _Jquery___Pluggin_ that will make easier to customize form fields by creating flexible custom form elements.
+ *
+ * FORM FIELDS SUPPORT:
  * - Select 
  * - Checkbox
  * - Radio
@@ -40,8 +42,10 @@ THE SOFTWARE.
  *  >   $('form').cstmForm() 
  *  *Select:* 
  *  >   $('select').cstmForm() 
+ *  *Upload:* 
+ *   >   $('input[type=file]').cstmForm()
  *  *Radio:* 
- *   >   $('input[type=radio]).cstmForm()
+ *   >   $('input[type=radio]').cstmForm()
  *  *Radio, checkbox, select:* 
  *   >    $('input[type=radio], input[type=checkbox], select').cstmForm()
  *
@@ -52,8 +56,8 @@ THE SOFTWARE.
  * >      customEle      : 'a',
  * >      containerEle   : 'div',
  * >      classPrefix    : 'custom-',
- * >      autoHide       : 1, // auto hide the stylized element
- * >      active         : 0, // oad all custom form 
+ * >      autoHide       : 1, // Auto hide the stylized elements
+ * >      active         : 0, // Load all custom form modules
  * >      select: {
  * >          active: 1,
  * >      },
@@ -98,8 +102,8 @@ THE SOFTWARE.
         customEle      : 'a',
         containerEle   : 'div',
         classPrefix    : 'custom-',
-        autoHide       : 1, // auto hide the stylized element
-        active         : 0, // oad all custom form 
+        autoHide       : 1, // Auto hide the stylized elements
+        active         : 0, // Load all custom form modules
         select: {
             active: 1,
         },
@@ -129,7 +133,8 @@ THE SOFTWARE.
 
  /*
   *
-  * Class: cstmForm.core
+  * Function: core  
+  *
   * _Collection_ of *Helper functions*
   *
   * METHODS:
@@ -299,6 +304,14 @@ THE SOFTWARE.
         }
     },
         
+ /*
+  *
+  * Function: checkbox
+  *
+  * Create custom checkboxes elements
+  *
+  *
+  */
     checkbox = function(arr) 
     {
     // creates an element eg : <span id="custom-email" class="customForm-checkbox" >Email</span>
@@ -340,6 +353,14 @@ THE SOFTWARE.
         }
     },
     
+ /*
+  *
+  * Function: radio
+  *
+  * Create custom radio elements
+  *
+  *
+  */
     radio = function(arr) 
     {
         if( settings.radio.active || settings.active )
@@ -383,6 +404,14 @@ THE SOFTWARE.
         }
     },
     
+ /*
+  *
+  * Function: file
+  *
+  * Create custom upload file elements
+  *
+  *
+  */
     file = function(arr) {        
         if( settings.file.active || settings.active )
         {
@@ -420,6 +449,14 @@ THE SOFTWARE.
         }
     },
 
+ /*
+  *
+  * Function: select
+  *
+  * Create custom select elements
+  *
+  *
+  */
     select = function(arr) {        
 
         if( settings.select.active || settings.active )
@@ -458,9 +495,20 @@ THE SOFTWARE.
             });
         }
 
-    };
+    },
     
-    (function( options, $arr ) {        
+ /*
+  *
+  * Function: init
+  *
+  * Auto loads Custom Forms
+  *
+  * PARAMETERS:
+  * options - Associative array of options to overwritte default settings 
+  * $arr - Array of elements
+  *
+  */
+    init = function( options, $arr ) {        
         // check to for object, if it exists start the pluggin, else return
         if ( $arr.length ) 
         {
@@ -473,7 +521,7 @@ THE SOFTWARE.
             //load the modules                  
             core.load_modules( core.sort_elements( $arr ) );                   
         }
-    }( options, $arr ));
+    }( options, $arr );
 
   };
 })( jQuery );
