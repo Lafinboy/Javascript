@@ -28,9 +28,13 @@ THE SOFTWARE.
 /*
  *
  * Class: cstmForm
- * Custom forms will make it easier to stylize form fields
+ * *Custom Forms* will make it easier to stylize form fields with support to
+ * - Select 
+ * - Checkbox
+ * - Radio
+ * - File uploader
  *
- *  Usage:
+ *  USAGE:
  *
  *  *All Form elements:* 
  *  >   $('form').cstmForm() 
@@ -77,7 +81,7 @@ THE SOFTWARE.
  * >      }
  * >  }
  *
- * Parameters:
+ * PARAMETERS:
  *
  *    options - object will overwrite default 
  *    - *Example* :
@@ -125,15 +129,23 @@ THE SOFTWARE.
 
  /*
   *
-  * Function: core
+  * Class: cstmForm.core
+  * _Collection_ of *Helper functions*
   *
-  * Parameters:
+  * METHODS:
+  *
+  *   generate_id - Returns a new ID base on the name of the input 
+  *   convert_to_name - String formating convert firstName FirstName first-name FIRST NAME to: First Name
+  *   get_alphanumeric - Removes any weird caracters  
+  *   sort_elements - Sort all form elements into their groups and returns an associative array of elements array. 
+  *   load_modules - Load modules with their respective arrays as parameters 
+  *
   */
     core = 
     {
         generate_id: function( $elem )
         {
-            return settings.classPrefix + ( $elem.attr('name') || $elem.attr('id') ); // generate id based on name or id of the elment
+            return settings.classPrefix + $elem.attr('name'); 
         },
         hide_element: function( $elem, transparent )
         {
