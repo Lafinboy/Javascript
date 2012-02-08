@@ -79,7 +79,7 @@ THE SOFTWARE.
  *
  * Parameters:
  *
- *    options - object 
+ *    options - object will overwrite default 
  *    - *Example* :
  * > $('form').cstmForm({ customEle: 'span' });
  *       
