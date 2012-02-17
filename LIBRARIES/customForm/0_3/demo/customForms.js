@@ -99,23 +99,20 @@ THE SOFTWARE.
         autoHide       : 1, // Auto hide the stylized elements
         active         : 0, // Load all custom form modules
         select: {
-            active: 1,
+            active: 1
         },
         radio: {
-            active: 1,
+            active: 1
         },
         checkbox: {
-            active: 1,
+            active: 1
         },
         file: {
-            active: 1,
+            active: 1
         },
         text: {
-            active: 0,
-            prefix: 0,
-            suffix: 0,
-            prefix_txt: "Please enter ",
-            suffix_txt: "..",
+            active: 1,
+            blur_color: "#777"
         }
     },
 
@@ -161,35 +158,6 @@ THE SOFTWARE.
                 $(this).hide();
             }
         },
-        convert_to_name: function( str )
-        {
-            // convert firstName FirstName first-name FIRST NAME to: First Name..
-            // Also capitalize first letter in case of email : Email..
-            // full name : Fullname..
-            
-            // check for capitalized letters
-            // replace separators '-', '_', '.', ':'  for ' ' -> valid id, name separators
-            // http://www.w3.org/TR/html401/types.html#type-cdata
-            // Capitalize the first Letter
-            // return string
-            //var separators = /[\:._-]/g, jquery only allow '-' and '_' as separators
-            
-            var separators = /[\:._-]/g,
-                s = str;
-                
-                s = str.replace( separators, " ");
-                s = s.toLowerCase();
-                s = s.split("");
-                s[0] = s[0].toUpperCase();
-                s = s.join("")
-
-                return s;
-        },
-        get_alphanumeric: function( str ) 
-        {
-            var alphanumeric = /[^a-zA-Z_\s0-9]*/g;
-            return $.trim( str.replace( alphanumeric, "") );
-        },
         sort_elements: function( $arr )
         {
             var c=[], r=[], f=[], s=[], t=[];
@@ -233,57 +201,50 @@ THE SOFTWARE.
 
     text = function(arr)
     {
-        if( settings.text.active || settings.active )
+        if( settings.text.active || settings.active ) 
         {
-            var _defaultVal = {}; // store all the settings to do a quick validation
+            // Check support for placeholder
+            var support_placeholder = ('placeholder' in document.createElement('input')),
+                _defaultVal = {}; // store all the settings to do a quick validation
 
             $(arr).each( function() {  
-
                 var $curEle = this,
-                    defaultVal, 
-                    name = $curEle.attr('name'),
-                    text = ( $curEle.attr('data-cstText') )
-                         ? $curEle.attr('data-cstText') 
-                         : name;
+                    text = $curEle.attr('placeholder');
 
+                if( !support_placeholder && text )
+                {
+                    var name = $curEle.attr('name'),
+                        _color = $curEle.css('color');
 
-                // split name based on separators like '-' and '_'
-                text = core.convert_to_name( text );
+                    $curEle.val( text );
+                    _defaultVal[name] = text;
 
-                // remove weird caracters that may be on the lable like * ! or anythingg
-                text = core.get_alphanumeric( text );
+                    var color = ( $.trim( $curEle.val() ) == _defaultVal[name] ||
+                        $.trim( $curEle.val() ) == "" )
+                            ? settings.text.blur_color
+                            : _color;
 
-                // add prefix
-                text = ( settings.text.prefix ) 
-                     ? settings.text.prefix_txt + text 
-                     : text;
+                    $curEle.css("color", color);
 
-                // add suffix
-                text = ( settings.text.suffix ) 
-                     ? text + settings.text.suffix_txt 
-                     : text;
-
-                $curEle.val( text );
-                _defaultVal[name] = text;
-
-                $curEle.focusin(
-                    function()
-                    {
-                        if( $.trim( $curEle.val() ) == _defaultVal[name] )
+                    $curEle.focusin(
+                        function()
                         {
-                            $curEle.val("");
-                        } 
-                    }
-                )
-                .focusout(
-                    function()
-                    {
-                        if( $.trim( $curEle.val() ) == "" )
-                        {
-                            $curEle.val( _defaultVal[name] );
+                            if( $.trim( $curEle.val() ) == _defaultVal[name] )
+                            {
+                                $curEle.val("");
+                            } 
                         }
-                    }
-                );
+                    )
+                    .focusout(
+                        function()
+                        {
+                            if( $.trim( $curEle.val() ) == "" )
+                            {
+                                $curEle.val( _defaultVal[name] );
+                            }
+                        }
+                    );
+                }
             });
         }
     },

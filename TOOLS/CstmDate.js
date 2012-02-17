@@ -1,13 +1,3 @@
-/*
- * Class: CstmDate
- *
- * Validates date
- *
- * Parameters: 
- *     day - int
- *     month - int
- *     year - int
- */
 function CstmDate() 
 {
 			var self = this;
