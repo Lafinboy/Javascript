@@ -219,17 +219,15 @@ THE SOFTWARE.
                     $curEle.val( text );
                     _defaultVal[name] = text;
 
-                    var color = ( $.trim( $curEle.val() ) == _defaultVal[name] ||
-                        $.trim( $curEle.val() ) == "" )
-                            ? settings.text.blur_color
-                            : _color;
+                    var color = ( $.trim( $curEle.val() ) === _defaultVal[name] ||
+                                $.trim( $curEle.val() ) === "" ) ? settings.text.blur_color : _color;
 
                     $curEle.css("color", color);
 
                     $curEle.focusin(
                         function()
                         {
-                            if( $.trim( $curEle.val() ) == _defaultVal[name] )
+                            if( $.trim( $curEle.val() ) === _defaultVal[name] )
                             {
                                 $curEle.val("");
                             } 
@@ -238,7 +236,7 @@ THE SOFTWARE.
                     .focusout(
                         function()
                         {
-                            if( $.trim( $curEle.val() ) == "" )
+                            if( $.trim( $curEle.val() ) === "" )
                             {
                                 $curEle.val( _defaultVal[name] );
                             }
