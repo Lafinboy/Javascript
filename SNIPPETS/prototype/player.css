@@ -1,0 +1,132 @@
+body {
+    background: #222;
+    color: #fff;
+}
+
+/* Container */
+div.cstPlayer {
+    background: grey;
+    height: 300px;
+    width: 550px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Player */
+div.cst_videoplayer {
+    height: 100%
+    width: height: 100%:
+    position: relative;
+}
+
+div.cst_videoplayer div.cst_play_toogle {
+    position: absolute;
+    top: 70px;
+    left: 210px;
+    background: white;
+    height: 120px;
+    width: 120px;
+    -moz-border-radius: 60px;
+    -webkit-border-radius: 60px;
+    border-radius: 60px;
+}
+
+div.cst_controllers {
+    position: absolute;
+    bottom: 0px; 
+    background: black;
+    height: 45px;
+    width: 100%;
+}
+
+div.cst_controllers div.cst_play_toogle {
+    background: green;
+    border: 2px solid white;
+    width: 40px; 
+    height: 20px;
+    margin: 10px 20px 0px 0px;
+   float: left;
+}
+
+div.cst_progress_bar {
+   height: 15px; 
+   background: yellow;
+   width: 300px;
+   float: left;
+   margin: 20px 20px 0px 0px;
+}
+
+div.cst_playing {
+    background: green;
+    width: 30px;
+    height: 100%;
+    float: left;
+}
+
+div.cst_downloading {
+    float: left;
+    width: 49px;
+    background: purple;
+    height: 100%;
+}
+
+div.cst_indicator {
+    float: left;
+    width: 110px;
+}
+
+div.cst_progress_bar div.cst_indicator {
+    position: absolute;
+    bottom: 10px;
+    width: 50px;
+    left: 93px;
+    padding: 0px 0px 15px;
+    border-left: 2px solid red;
+    color: blue;
+    font-weight: bold;
+}
+
+div.cst_volume {
+    float: left;
+    width: 30px;
+    height: 30px;
+    position: relative;
+    padding: 5px 0px 0px 0px
+}
+
+div.cst_volume_toogle {
+    width: 30px;
+    background: green;
+    border: 2px solid white;
+    height: 30px;
+
+}
+
+div.cst_volume_bar {
+    position: absolute;
+    bottom: 100%;
+    left: 10px;
+    height: 50px;
+    width: 5px;
+    background: blue;
+}
+
+div.cst_handle {
+    height: 16px;
+    width: 16px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    background: white;
+    position: absolute;
+    top: 30px;
+    left: -5px;
+}
+
+#cst_video {
+    height: 100%;
+    width: 100%;
+}
+.red {
+    background: red !important;
+}

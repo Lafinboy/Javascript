@@ -1,0 +1,49 @@
+<!DOCTYPE>
+<html>
+<head>
+  	<title>chromeless player</title>
+    <link rel="stylesheet" href="player.css" type="text/css" media="screen" />
+    <script src="http://www.youtube.com/player_api"></script>
+    <script src="jquery-1.7.1.min.js"></script>
+    <script src="player.js"></script>
+</head>
+<body>
+    <h1>Chromeless player</h1>
+
+    <div class="cstPlayer" id="cstPlayer">
+
+      <div class="cst_videoplayer">
+        <div id="cst_video"></div>
+        <div class="cst_play_toogle"></div> 
+      </div><!-- video player -->
+
+      <div class="cst_controllers">
+
+        <div class="cst_play_toogle"></div>
+
+        <div class="cst_progress_bar">
+          <div class="cst_playing"></div> 
+          <div class="cst_downloading"></div> 
+          <div class="cst_indicator">
+            <span class="current">2:20</span>
+          </div> 
+        </div>
+
+        <div class="cst_indicator">
+          <span class="current">2:20</span> /
+          <span class="total">4:59</span>
+        </div> 
+
+        <div class="cst_volume">
+          <div class="cst_volume_toogle"></div>
+          <div class="cst_volume_bar">
+             <div class="cst_handle"></div> 
+          </div> 
+        </div> 
+
+       </div><!-- Controllers -->
+   
+    </div><!-- cstPlayer -->
+
+</body>
+</html>
