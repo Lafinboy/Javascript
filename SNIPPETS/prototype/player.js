@@ -202,6 +202,9 @@ Cstplayer.prototype.Controllers = (function(){
        get_download_buffer = function() {
             return player.getVideoBytesLoaded();
        },
+       get_video_size = function() {
+            return player.getVideoBytesTotal();
+       },
        get_ellapsed_time = function() {
             return ( player ) ? player.getCurrentTime() : 0;
        },
@@ -281,7 +284,10 @@ Cstplayer.prototype.Controllers = (function(){
             Seek: set_video_time,
             Time: get_ellapsed_time,
             Duration: get_duration,
-            Buffer: get_download_buffer,
+            Buffer: { 
+                download: get_download_buffer,
+                total: get_video_size
+            },
             Volume: set_volume
        };
 }());
@@ -416,9 +422,11 @@ Cstplayer.prototype.Init = (function( options ) {
                     $('div.cst_indicator .cst_total').html( self.Helper.Minutes(this.loopCached.duration) ); // this is only called once 
                 }
 
-                var playing = self.Helper.Int(self.Controllers.Time() * this.loopCached.play_step); 
+                var playing = self.Helper.Int(self.Controllers.Time() * this.loopCached.play_step),
+                    download_step = ( self.Helper.Int( (this.loopCached.progresss_bar_width / self.Controllers.Buffer.total())  * self.Controllers.Buffer.download() ) ) || 0;
 
                 this.loopCached.$playing_bar.css('width', playing + "px" );
+                this.loopCached.$download_bar.css('width', download_step + "px" );
                 this.loopCached.$cur.html( self.Helper.Minutes(self.Controllers.Time()) );
             },50 );
 
