@@ -267,6 +267,9 @@ Cstplayer.prototype.Controllers = (function(){
               playerVars: { 
                 'autoplay': opt.autoplay, 
                 'wmode': 'opaque',
+                'modestbranding': 1,
+                'rel': 0,
+                'showinfo': 0,
                 'controls': 0 
               },
               events: {
@@ -441,5 +444,5 @@ Cstplayer.prototype.Init = (function( options ) {
 
 function onYouTubePlayerAPIReady() {
   //var
-  player = new Cstplayer({ player: 'cst_video', id: 'pdLGRQ3CFLI' });
+  player = new Cstplayer({ player: 'cst_video', id: '7yeA7a0uS3A' });
 }
