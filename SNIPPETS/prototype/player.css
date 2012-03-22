@@ -59,14 +59,14 @@ div.cst_progress_bar {
 
 div.cst_playing {
     background: green;
-    width: 30px;
+    width: 0px;
     height: 100%;
     float: left;
 }
 
 div.cst_downloading {
     float: left;
-    width: 49px;
+    width: 0px;
     background: purple;
     height: 100%;
 }
