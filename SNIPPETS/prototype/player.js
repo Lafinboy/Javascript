@@ -30,10 +30,10 @@ Cstplayer.prototype.Helper = (function(){
                 height: get_int($e.css('height'))
             };
         },
-        get_percentage = function( percentage, num, rfloat ) {
+        get_percentage = function( num, total, rfloat ) {
             /* Ret = Int || float
              * Percentage as floats ranges from 0 to 1. */
-            var ret = num * percentage, 
+            var ret = num * 100 / total, 
                 rfloat = typeof(rfloat)!="undefined" ? rfloat : false;
 
             return rfloat ? ret : Math.floor(ret);
@@ -49,6 +49,133 @@ Cstplayer.prototype.Helper = (function(){
         resize = function( $e, $p ) {
 
         },
+        set_element_draggable = function( $e, options ) {
+            /* Can set directions that the element can be dragged "x", "y", "both" default "both"
+            * Can align handle to "left" "right" or "center" default "center"
+            * A parent for the dragger to be based on can be passed or it will assume its his parent container
+            * Can also send option Callback, which will be fired at everytime during the dragging
+            * Assumes element has position absolute and bounds have position relative
+            */
+            var ret = false,
+                options = options || {},
+                self = this;
+
+            if( !$e.hasClass('draggable') )
+            {
+                $e.addClass('draggable');
+
+                var direction =     options.direction || "both",
+                align =             options.align || "center", 
+                valign =            options.valign || "center", 
+                $p =                options.bounds || $e.parent(),
+                callback_dragging = options.callback.dragging || function(){},
+                callback_stop =     options.callback.stop || function(){},
+
+                stop_browser_default = function( event ) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                },
+                dragging = function( event ) {
+                     /* Element to be dragged and the bounds that he is attached to */
+                    var leftval = null,
+                        topval = null,
+                        e = self.Bounds($e);  
+                        p = self.Bounds($p); 
+
+                    if( direction == "both" || direction == "x" )
+                    {
+
+                        var x_space = null;
+
+                        switch( align  )
+                        {
+                            case "left":
+                                x_space = 0;
+                                break;
+                            case "right":
+                                x_space =  - e.width;
+                                break;
+                            case "center":
+                                x_space =  - self.Int( e.width / 2 );
+                                break;
+                        }
+
+                     if( event.clientX >= ( p.width - ( e.width ) ) + p.offsetLeft )
+                          leftval = p.width - e.width;
+                     else if( event.clientX <= p.offsetLeft + ( e.width ) )
+                          leftval = 0;
+                     else
+                          leftval = event.clientX - p.offsetLeft + x_space;
+
+                      $e.css({ left: leftval });
+                    }
+
+                    if( direction == "both" || direction == "y" )
+                    {
+                        var y_space = null;
+
+                        switch( valign  )
+                        {
+                            case "top":
+                                y_space = 0;
+                                break;
+                            case "bottom":
+                                y_space =  - e.height;
+                                break;
+                            case "center":
+                                y_space =  - self.Int( e.height / 2 );
+                                break;
+                        }
+
+                     if( event.clientY >= ( p.height - ( e.height ) ) + p.offsetTop )
+                          topval = p.height - e.height;
+                     else if( event.clientY <= p.offsetTop + ( e.height ) )
+                          topval = 0;
+                     else
+                          topval = event.clientY - p.offsetTop + y_space;
+
+                      $e.css({ top: topval });
+                    }
+
+                    callback_dragging({ left: leftval, top: topval });
+                },
+                start_dragging = function (event){
+                    $e.addClass('dragging');
+                    dragging(event);
+                },
+                stop_dragging = function() {
+                    if( $e.hasClass('dragging') ) 
+                    {
+                        $e.removeClass('dragging');
+                        callback_stop();
+                    }
+                };
+
+                $e.mousedown(function(event){
+                    start_dragging(event);
+                });
+
+                $p
+                .mousedown(function(event){
+                    stop_browser_default(event);
+                    start_dragging(event);
+                })
+                .mousemove(function(event){
+                    if( $e.hasClass('dragging') )
+                    {
+                        start_dragging(event);
+                    }
+                })
+                .bind('click mouseleave mouseup', function(event){
+                    stop_browser_default(event);
+                    stop_dragging();
+                });
+                
+                ret = true;
+            }
+
+            return ret;
+        },
         center = function( $e, $p ) {
         
         };
@@ -57,7 +184,8 @@ Cstplayer.prototype.Helper = (function(){
             Float: get_float,
             Bounds: get_bounds,
             Percentage: get_percentage,
-            Minutes: seconds_to_minutes
+            Minutes: seconds_to_minutes,
+            Draggable: set_element_draggable
         };
 }());
 
@@ -119,17 +247,27 @@ Cstplayer.prototype.Controllers = (function(){
            player = evnt.target;
            set_volume(100);
        },
-       load_video = function( opt ) {
+       load_video = function( opt, events ) {
+
+            var callEvents = events; 
+
+            function dispatcher( event ) {
+                /* Load events when the player is ready */
+                on_player_ready(event);
+                callEvents();
+            }
+
             return new YT.Player(opt.player, {
               height: 300,
               width: 550,
               videoId: opt.id,
               playerVars: { 
                 'autoplay': opt.autoplay, 
+                'wmode': 'opaque',
                 'controls': 0 
               },
               events: {
-                'onReady': on_player_ready,
+                'onReady': dispatcher,
                 'onStateChange': state_change,
                 'onError': show_error
               }
@@ -154,9 +292,9 @@ Cstplayer.prototype.Init = (function( options ) {
     // Extend settings to read from options
     if( options ) { for( prop in options ) { this.Settings[prop] = options[prop]; } }
     var self = this,
-    player = this.Controllers.Load( this.Settings ),
     build = (function() 
     {
+
        var html = (function() {
            var create_controllers = (function() {
 
@@ -191,18 +329,103 @@ Cstplayer.prototype.Init = (function( options ) {
                 player: create_player 
            };
        }()),
-       events = (function() {
-            $('div.cst_play_toogle').click(function(){ self.Controllers.PlayToogle(); $(this).toggleClass('red'); }); // play toogle
-            $('div.cst_volume_toogle').click(function(){ self.Controllers.SoundToogle(); $(this).toggleClass('red'); }); // play toogle
 
-            /* updating the indicator bar */
-            window.setInterval(function(){ 
-                $('div.cst_indicator .current').html( self.Helper.Minutes(self.Controllers.Time()) );
-                $('div.cst_indicator .total').html( self.Helper.Minutes(self.Controllers.Duration()) );
+       events = function() {
+
+            /* play toogle */
+            $('div.cst_play_toogle').click(function(){ 
+                self.Controllers.PlayToogle(); 
+                $(this).toggleClass('red'); 
+                $('div.cst_videoplayer div.cst_play_toogle').hide(); 
+            });
+
+            /* play toogle */
+            $('div.cst_volume_toogle').click(function(){ 
+                self.Controllers.SoundToogle(); 
+                $(this).toggleClass('red'); 
+            }); 
+
+            /* Add the progress bar indicator helper */
+            self.Helper.Draggable($('.cst_progress_bar .cst_handle'), 
+            {
+                direction: "x",
+                align: "center",
+                callback: {
+                  dragging:  function( position ) {
+                        if(!this.progressbarCached) {
+                            this.progressbarCached = { $indicator: $('.cst_progress_bar .cst_indicator'), bar_width: self.Helper.Int($('div.cst_progress_bar').css('width')) }
+                        }
+
+                       this.progressbarCached.steps = this.progressbarCached.bar_width / self.Controllers.Duration()
+
+                       this.progressbarCached.$indicator 
+                       .show() 
+                       .css('left', position.left )
+                       .html(self.Helper.Minutes(position.left / this.progressbarCached.steps));
+                  },
+                  stop: function() {
+                      var steps = this.progressbarCached.bar_width / self.Controllers.Duration(),
+                          playtime = self.Helper.Int(this.progressbarCached.$indicator.css('left')) / this.progressbarCached.steps;
+
+                      self.Controllers.Seek(playtime);
+                      this.progressbarCached.$indicator.hide()   
+                      $('div.cst_videoplayer div.cst_play_toogle').hide();
+                  }
+                }
+            });
+
+            /* Add the volume bar helper */
+            self.Helper.Draggable($('.cst_volume_bar .cst_handle'), 
+            {   
+                direction: "y",
+                valign: "center",
+                callback: {
+                  dragging:  function( position ) { 
+                    if(!this.volumeCached) {
+                        var $handle = $('.cst_volume .cst_handle'),
+                            container_size = self.Helper.Int($('.cst_volume_bar').css('height')),
+                            handle_size = self.Helper.Int($handle.css('height'));
+
+                        this.volumeCached = { $handle: $handle, max_size: container_size - handle_size,  }; // cache variables
+                    }
+                    
+                    var volume = self.Helper.Percentage( self.Helper.Int(this.volumeCached.$handle.css('bottom')), this.volumeCached.max_size);
+                    self.Controllers.Volume(volume);
+                  },  
+                  stop: function() {
+                    var volume = self.Helper.Percentage( self.Helper.Int(this.volumeCached.$handle.css('bottom')), this.volumeCached.max_size);
+                  }   
+                }   
+            }); 
+
+            /* Main Loop */
+            this.mainLoop = window.setInterval(function(){ 
+                if(!this.loopCached) {
+
+                    this.loopCached = { 
+                        duration: self.Controllers.Duration(),
+                        progresss_bar_width: self.Helper.Int( $('div.cst_progress_bar').css('width') ),
+                        $cur: $('div.cst_indicator .cst_current'), 
+                        $playing_bar: $('div.cst_playing'),
+                        $download_bar: $('div.cst_downloading')
+                    };
+
+                    this.loopCached.play_step = this.loopCached.progresss_bar_width / this.loopCached.duration;
+
+
+                    $('div.cst_indicator .cst_total').html( self.Helper.Minutes(this.loopCached.duration) ); // this is only called once 
+                }
+
+                var playing = self.Helper.Int(self.Controllers.Time() * this.loopCached.play_step); 
+
+                this.loopCached.$playing_bar.css('width', playing + "px" );
+                this.loopCached.$cur.html( self.Helper.Minutes(self.Controllers.Time()) );
             },50 );
-       }());
+
+       },
+       player = self.Controllers.Load( self.Settings, events );
         
-       return html.player;
+       return player;
     }());
 
    return true;

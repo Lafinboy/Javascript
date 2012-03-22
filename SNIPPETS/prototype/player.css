@@ -49,11 +49,12 @@ div.cst_controllers div.cst_play_toogle {
 }
 
 div.cst_progress_bar {
-   height: 15px; 
+   height: 35px; 
    background: yellow;
    width: 300px;
    float: left;
-   margin: 20px 20px 0px 0px;
+   margin: 5px 20px 0px 0px;
+   position: relative;
 }
 
 div.cst_playing {
@@ -77,13 +78,13 @@ div.cst_indicator {
 
 div.cst_progress_bar div.cst_indicator {
     position: absolute;
-    bottom: 10px;
-    width: 50px;
+    bottom: 0px;
+    border-left: 2px solid red;
     left: 93px;
     padding: 0px 0px 15px;
-    border-left: 2px solid red;
     color: blue;
     font-weight: bold;
+    display: none;
 }
 
 div.cst_volume {
@@ -103,25 +104,29 @@ div.cst_volume_toogle {
 }
 
 div.cst_volume_bar {
-    position: absolute;
-    bottom: 100%;
-    left: 10px;
     height: 50px;
-    width: 5px;
+    margin-top: -90px;
+    position: relative;
+    width: 4px;
     background: blue;
 }
 
-div.cst_handle {
-    height: 16px;
-    width: 16px;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    border-radius: 8px;
+div.cst_volume_bar div.cst_handle {
+    height: 10px;
+    width: 10px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    left: -3px;
     background: white;
     position: absolute;
-    top: 30px;
-    left: -5px;
 }
+
+div.cst_progress_bar div.cst_handle {
+    position: absolute; 
+    width: 1px;
+    height: 100%;
+}   
 
 #cst_video {
     height: 100%;
