@@ -398,11 +398,11 @@ Cstplayer.prototype.Init = (function( options ) {
                         this.volumeCached = { $handle: $handle, max_size: container_size - handle_size,  }; // cache variables
                     }
                     
-                    var volume = self.Helper.Percentage( self.Helper.Int(this.volumeCached.$handle.css('bottom')), this.volumeCached.max_size);
-                    self.Controllers.Volume(volume);
+                    this.volumeCached.volume = self.Helper.Percentage( self.Helper.Int(this.volumeCached.$handle.css('bottom')), this.volumeCached.max_size);
+                    self.Controllers.Volume(this.volumeCached.volume);
+                    $('div.cst_voume_itensity').css('height', this.volumeCached.volume + "%");
                   },  
                   stop: function() {
-                    var volume = self.Helper.Percentage( self.Helper.Int(this.volumeCached.$handle.css('bottom')), this.volumeCached.max_size);
                   }   
                 }   
             }); 
