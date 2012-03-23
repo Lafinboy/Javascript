@@ -4,8 +4,8 @@ function Cstplayer( options ){ this.Init( options ); }
 Cstplayer.prototype.Settings = (function(){ 
     return {
         player: 'cst_video',
-        width: 850,
-        height: 500,
+        width: 550,
+        height: 300,
         autoplay: 0,        
         volume: 100 
     }
