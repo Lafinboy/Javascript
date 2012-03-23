@@ -4,6 +4,7 @@ body {
     color: #fff;
     height: 100%;
     width: 100%;
+    padding-top: 100px;
 }
 
 #cst_video { height: 100%; width: 100%; }
@@ -34,9 +35,10 @@ div.cst_videoplayer div.cst_play_toogle {
 }
 
 div.cst_controllers {
+    z-index: 4000;
     position: absolute;
     bottom: 0px; 
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.4);
     height: 45px;
     width: 100%;
 }
@@ -45,6 +47,7 @@ div.cst_controllers div.cst_play_toogle {
    background: url(/images/controllers.png) no-repeat;
    background-position: 0 -153px; width: 38px; height: 37px;
    float: left;
+    margin: 4px 10px 0px 10px;
 }
 
 div.cst_controllers div.cst_play_toogle.playing {
@@ -56,6 +59,7 @@ div.cst_progress_bar {
    background: url(images/time_line_bg.png) repeat-x;
    float: left;
    position: relative;
+   margin: 20px 0px 0px;
 }
 
 div.cst_playing {
@@ -74,26 +78,29 @@ div.cst_downloading {
 
 div.cst_indicator {
     float: left;
-    width: 110px;
+    font-family: arial, helvetica, sans-serif;
+    color: #fff;
+    font-size: 15px;
+    margin: 15px 0px 0px 10px;
+    font-weight: bold;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)"; filter: alpha(opacity=70); -moz-opacity: 0.7; -khtml-opacity: 0.7; opacity: 0.7;
 }
 
 div.cst_progress_bar div.cst_indicator {
+    margin: 0px;
     position: absolute;
     bottom: 0px;
-    border-left: 2px solid red;
+    border-left: 2px solid white;
     left: 93px;
-    padding: 0px 0px 15px;
-    color: blue;
-    font-weight: bold;
+    padding: 0px 0px 8px 4px;
     display: none;
 }
 
 div.cst_volume {
     float: left;
-    width: 30px;
     height: 30px;
+    margin: 15px 0px 0px 10px;
     position: relative;
-    padding: 5px 0px 0px 0px
 }
 
 div.cst_volume_toogle {
