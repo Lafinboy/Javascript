@@ -392,9 +392,28 @@ Cstplayer.prototype.Init = (function( options ) {
             $('div.cst_volume_toogle').click(function(){ 
                 self.Controllers.SoundToogle(); 
                 $(this).toggleClass('muted'); 
+            })
+            .mouseover(function(){
+                $('div.cst_volume_bar').fadeIn('fast');   
+                if(self.volumeTimmer) { window.clearTimeout(self.volumeTimmer) }
+            })
+            .mouseleave(function(){
+                self.volumeTimmer = window.setTimeout(function(){
+                    $('div.cst_volume_bar').fadeOut('normal');   
+                }, 500);
             }); 
 
-            /* Add the progress bar indicator helper */
+            $('div.cst_volume_bar')
+            .bind('mouseover mousemove', function(){
+                if(self.volumeTimmer) { window.clearTimeout(self.volumeTimmer); }
+            })
+            .mouseleave(function(){
+                self.volumeTimmer = window.setTimeout(function(){
+                    $('div.cst_volume_bar').fadeOut('normal');   
+                }, 500);
+            }); 
+
+
             self.Helper.Draggable($('.cst_progress_bar .cst_handle'), 
             {
                 direction: "x",
