@@ -18,6 +18,7 @@ div.cstPlayer {
     background: grey;
     margin: 0 auto;
     position: relative;
+    border: 5px solid #fcfcfc;
 }
 
 /* Player */
@@ -99,7 +100,7 @@ div.cst_progress_bar div.cst_indicator {
 div.cst_volume {
     float: left;
     height: 30px;
-    margin: 15px 0px 0px 10px;
+    margin: 17px 10px 0px 10px;
     position: relative;
 }
 

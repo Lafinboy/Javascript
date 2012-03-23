@@ -57,20 +57,20 @@ Cstplayer.prototype.Helper = (function(){
                 height = 0; 
 
             $s.each(function(){
-               height += self.Int($(this).css('height')); 
-               width  += self.Int($(this).css('width')); 
+               height += $(this).outerHeight(true);
+               width  += $(this).outerWidth(true);
             });
 
             switch( measure ) {
                 case "both":
-                    resize.height = self.Int((self.Int($p.css('height')) - height) * 0.9) + "px";
-                    resize.width  = self.Int((self.Int($p.css('width')) - width) * 0.9) + "px";
+                    resize.height = ($p.outerHeight(true) - height) + "px";
+                    resize.width  = ($p.outerWidth(true) - width) + "px";
                     break;
                 case "width":
-                    resize.width  = self.Int((self.Int($p.css('width')) - width) * 0.9) + "px";
+                    resize.width  = ($p.outerWidth(true) - width) + "px";
                     break;
                 case "height":
-                    resize.height = self.Int((self.Int($p.css('height')) - height) * 0.9) + "px";
+                    resize.height = ($p.outerHeight(true) - height) + "px";
                     break;
             }
 
