@@ -4,8 +4,8 @@ function Cstplayer( options ){ this.Init( options ); }
 Cstplayer.prototype.Settings = (function(){ 
     return {
         player: 'cst_video',
-        width: 950,
-        height: 600,
+        width: 550,
+        height: 300,
         autoplay: 0,        
         volume: 100 
     }
@@ -63,14 +63,14 @@ Cstplayer.prototype.Helper = (function(){
 
             switch( measure ) {
                 case "both":
-                    resize.height = ($p.outerHeight(true) - height) + "px";
-                    resize.width  = ($p.outerWidth(true) - width) + "px";
+                    resize.height = ($p.outerHeight(true) - height);
+                    resize.width  = ($p.outerWidth(true) - width);
                     break;
                 case "width":
-                    resize.width  = ($p.outerWidth(true) - width) + "px";
+                    resize.width  = ($p.outerWidth(true) - width);
                     break;
                 case "height":
-                    resize.height = ($p.outerHeight(true) - height) + "px";
+                    resize.height = ($p.outerHeight(true) - height);
                     break;
             }
 
@@ -498,16 +498,16 @@ Cstplayer.prototype.Init = (function( options ) {
                 var playing = self.Helper.Int(self.Controllers.Time() * this.loopCached.play_step),
                     download_step = ( self.Helper.Int( (this.loopCached.progresss_bar_width / self.Controllers.Buffer.total())  * self.Controllers.Buffer.download() ) ) || 0;
 
-                this.loopCached.$playing_bar.css('width', playing + "px" );
-                this.loopCached.$download_bar.css('width', download_step + "px" );
+                this.loopCached.$playing_bar.css('width', playing );
+                this.loopCached.$download_bar.css('width', download_step );
                 this.loopCached.$cur.html( self.Helper.Minutes(self.Controllers.Time()) );
             },50 );
 
        };
 
         $('div.cstPlayer').css({
-            height: self.Settings.height + "px",
-            width: self.Settings.width + "px" 
+            height: self.Settings.height,
+            width: self.Settings.width 
         });
 
         self.Helper.Resize( $('div.cst_progress_bar'), 'width');
