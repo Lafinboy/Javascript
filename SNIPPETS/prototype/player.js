@@ -383,14 +383,15 @@ Cstplayer.prototype.Init = (function( options ) {
             /* play toogle */
             $('div.cst_play_toogle').click(function(){ 
                 self.Controllers.PlayToogle(); 
-                $(this).toggleClass('red'); 
+                
+                $('div.cst_play_toogle').toggleClass('playing');
                 $('div.cst_videoplayer div.cst_play_toogle').hide(); 
             });
 
             /* play toogle */
             $('div.cst_volume_toogle').click(function(){ 
                 self.Controllers.SoundToogle(); 
-                $(this).toggleClass('red'); 
+                $(this).toggleClass('muted'); 
             }); 
 
             /* Add the progress bar indicator helper */

@@ -28,14 +28,9 @@ div.cst_videoplayer {
 
 div.cst_videoplayer div.cst_play_toogle {
     position: absolute;
-    top: 70px;
-    left: 210px;
-    background: white;
-    height: 120px;
-    width: 120px;
-    -moz-border-radius: 60px;
-    -webkit-border-radius: 60px;
-    border-radius: 60px;
+    background: url(/images/controllers.png) no-repeat;
+    width: 135px; 
+    height: 134px;
 }
 
 div.cst_controllers {
@@ -47,23 +42,24 @@ div.cst_controllers {
 }
 
 div.cst_controllers div.cst_play_toogle {
-    background: green;
-    border: 2px solid white;
-    width: 40px; 
-    height: 20px;
+   background: url(/images/controllers.png) no-repeat;
+   background-position: 0 -153px; width: 38px; height: 37px;
    float: left;
 }
 
+div.cst_controllers div.cst_play_toogle.playing {
+    background-position:-49px -153px;
+}
+
 div.cst_progress_bar {
-   height: 35px; 
-   background: yellow;
-   width: 300px;
+   height: 7px; 
+   background: url(images/time_line_bg.png) repeat-x;
    float: left;
    position: relative;
 }
 
 div.cst_playing {
-    background: green;
+    background: rgba(255,255,255, 0.8);
     width: 0px;
     height: 100%;
     float: left;
@@ -72,7 +68,7 @@ div.cst_playing {
 div.cst_downloading {
     float: left;
     width: 0px;
-    background: purple;
+    background: rgba(198,0,255, 0.2);
     height: 100%;
 }
 
@@ -101,11 +97,10 @@ div.cst_volume {
 }
 
 div.cst_volume_toogle {
-    width: 30px;
-    background: green;
-    border: 2px solid white;
-    height: 30px;
-
+    background: url(images/controllers.png) no-repeat -97px -164px; width: 16px; height: 15px;
+}
+div.cst_volume_toogle.muted {
+    width: 9px;
 }
 
 div.cst_volume_bar {
@@ -146,4 +141,5 @@ div.cst_voume_itensity {
 /* Helpers */
 .hover { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)"; filter: alpha(opacity=80); -moz-opacity: 0.8; -khtml-opacity: 0.8; opacity: 0.8; }
 .hover:hover { opacity: 1 !important; }
+.hover:active { position: relative; top: 1px; }
 .red { background: red !important; }
