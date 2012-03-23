@@ -46,8 +46,35 @@ Cstplayer.prototype.Helper = (function(){
             
              return  minutes + ":" + seconds;
         },
-        resize = function( $e, $p ) {
+        resize = function( $e, measure ) {
+            /* Resize element based on parent size, and sibblings size to fully fill entire available space */
+            var self = this,
+                measure = measure || "both",
+                resize = {},
+                $p = $e.parent(),
+                $s = $e.siblings(),
+                width = 0,
+                height = 0; 
 
+            $s.each(function(){
+               height += self.Int($(this).css('height')); 
+               width  += self.Int($(this).css('width')); 
+            });
+
+            switch( measure ) {
+                case "both":
+                    resize.height = self.Int((self.Int($p.css('height')) - height) * 0.9) + "px";
+                    resize.width  = self.Int((self.Int($p.css('width')) - width) * 0.9) + "px";
+                    break;
+                case "width":
+                    resize.width  = self.Int((self.Int($p.css('width')) - width) * 0.9) + "px";
+                    break;
+                case "height":
+                    resize.height = self.Int((self.Int($p.css('height')) - height) * 0.9) + "px";
+                    break;
+            }
+
+            $e.css( resize )
         },
         set_element_draggable = function( $e, options ) {
             /* Can set directions that the element can be dragged "x", "y", "both" default "both"
@@ -64,12 +91,14 @@ Cstplayer.prototype.Helper = (function(){
             {
                 $e.addClass('draggable');
 
-                var direction =     options.direction || "both",
-                align =             options.align || "center", 
-                valign =            options.valign || "center", 
-                $p =                options.bounds || $e.parent(),
-                callback_dragging = options.callback.dragging || function(){},
-                callback_stop =     options.callback.stop || function(){},
+                var direction =       options.direction || "both",
+                align =               options.align || "center", 
+                valign =              options.valign || "center", 
+                $p =                  options.bounds || $e.parent(),
+                unconstrain =         options.unconstrain || false,
+                callback =            options.callback || {},
+                callback_dragging =   callback.dragging || function(){},
+                callback_stop =       callback.stop || function(){},
 
                 stop_browser_default = function( event ) {
                     event.preventDefault();
@@ -139,8 +168,7 @@ Cstplayer.prototype.Helper = (function(){
 
                     callback_dragging({ left: leftval, top: topval });
                 },
-                start_dragging = function (event){
-                    $e.addClass('dragging');
+                start_dragging = function(event){
                     dragging(event);
                 },
                 stop_dragging = function() {
@@ -152,24 +180,29 @@ Cstplayer.prototype.Helper = (function(){
                 };
 
                 $e.mousedown(function(event){
+                    $e.addClass('dragging');
                     start_dragging(event);
                 });
 
                 $p
                 .mousedown(function(event){
                     stop_browser_default(event);
-                    start_dragging(event);
+                    $e.addClass('dragging');
                 })
-                .mousemove(function(event){
-                    if( $e.hasClass('dragging') )
-                    {
-                        start_dragging(event);
-                    }
-                })
-                .bind('click mouseleave mouseup', function(event){
+                .bind('click '+((unconstrain) ? '' :'mouseleave ')+'mouseup', function(event){
                     stop_browser_default(event);
                     stop_dragging();
+                })
+
+                $('body')
+                .mouseup(function(event){
+                    stop_browser_default(event);
+                    stop_dragging();
+                })
+                .mousemove(function(event){
+                    if( $e.hasClass('dragging') ) { start_dragging(event); }
                 });
+
                 
                 ret = true;
             }
@@ -185,7 +218,8 @@ Cstplayer.prototype.Helper = (function(){
             Bounds: get_bounds,
             Percentage: get_percentage,
             Minutes: seconds_to_minutes,
-            Draggable: set_element_draggable
+            Draggable: set_element_draggable,
+            Resize: resize,
         };
 }());
 
@@ -373,6 +407,9 @@ Cstplayer.prototype.Init = (function( options ) {
                        .html(self.Helper.Minutes(position.left / this.progressbarCached.steps));
                   },
                   stop: function() {
+                      if(!this.progressbarCached) {
+                           this.progressbarCached = { $indicator: $('.cst_progress_bar .cst_indicator'), bar_width: self.Helper.Int($('div.cst_progress_bar').css('width')) }
+                      }
                       var steps = this.progressbarCached.bar_width / self.Controllers.Duration(),
                           playtime = self.Helper.Int(this.progressbarCached.$indicator.css('left')) / this.progressbarCached.steps;
 
@@ -388,6 +425,7 @@ Cstplayer.prototype.Init = (function( options ) {
             {   
                 direction: "y",
                 valign: "center",
+                unconstrain: true,
                 callback: {
                   dragging:  function( position ) { 
                     if(!this.volumeCached) {
@@ -403,6 +441,13 @@ Cstplayer.prototype.Init = (function( options ) {
                     $('div.cst_voume_itensity').css('height', this.volumeCached.volume + "%");
                   },  
                   stop: function() {
+                    if(!this.volumeCached) {
+                        var $handle = $('.cst_volume .cst_handle'),
+                            container_size = self.Helper.Int($('.cst_volume_bar').css('height')),
+                            handle_size = self.Helper.Int($handle.css('height'));
+
+                        this.volumeCached = { $handle: $handle, max_size: container_size - handle_size,  }; // cache variables
+                    }
                   }   
                 }   
             }); 
@@ -433,10 +478,17 @@ Cstplayer.prototype.Init = (function( options ) {
                 this.loopCached.$cur.html( self.Helper.Minutes(self.Controllers.Time()) );
             },50 );
 
-       },
-       player = self.Controllers.Load( self.Settings, events );
-        
-       return player;
+       };
+
+        $('div.cstPlayer').css({
+            height: self.Settings.height + "px",
+            width: self.Settings.width + "px" 
+        });
+
+        self.Helper.Resize( $('div.cst_progress_bar'), 'width');
+               
+       return self.Controllers.Load( self.Settings, events );
+
     }());
 
    return true;
