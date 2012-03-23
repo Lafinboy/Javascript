@@ -4,8 +4,8 @@ function Cstplayer( options ){ this.Init( options ); }
 Cstplayer.prototype.Settings = (function(){ 
     return {
         player: 'cst_video',
-        width: 550,
-        height: 300,
+        width: 850,
+        height: 500,
         autoplay: 0,        
         volume: 100 
     }
@@ -210,7 +210,11 @@ Cstplayer.prototype.Helper = (function(){
             return ret;
         },
         center = function( $e, $p ) {
-        
+            var self = this,
+                $p = $p || $e.parent(),
+                be = self.Bounds( $e );
+                bp = self.Bounds( $p );
+            $e.css({ top: self.Int(bp.height/2) - self.Int(be.height/2), left: self.Int(bp.width/2) - self.Int(be.width/2)});
         };
         return {
             Int: get_int,
@@ -220,6 +224,7 @@ Cstplayer.prototype.Helper = (function(){
             Minutes: seconds_to_minutes,
             Draggable: set_element_draggable,
             Resize: resize,
+            Center: center
         };
 }());
 
@@ -486,6 +491,7 @@ Cstplayer.prototype.Init = (function( options ) {
         });
 
         self.Helper.Resize( $('div.cst_progress_bar'), 'width');
+        self.Helper.Center($('.cst_videoplayer .cst_play_toogle'));
                
        return self.Controllers.Load( self.Settings, events );
 

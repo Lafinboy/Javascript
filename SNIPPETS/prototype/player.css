@@ -6,6 +6,8 @@ body {
     width: 100%;
 }
 
+#cst_video { height: 100%; width: 100%; }
+
 #matt {
     position: absolute;
 }
@@ -140,10 +142,8 @@ div.cst_voume_itensity {
     height: 100%;
 }
 
-#cst_video {
-    height: 100%;
-    width: 100%;
-}
-.red {
-    background: red !important;
-}
+
+/* Helpers */
+.hover { -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)"; filter: alpha(opacity=80); -moz-opacity: 0.8; -khtml-opacity: 0.8; opacity: 0.8; }
+.hover:hover { opacity: 1 !important; }
+.red { background: red !important; }
