@@ -27,7 +27,7 @@ div.cst_videoplayer {
 
 div.cst_videoplayer div.cst_play_toogle {
     position: absolute;
-    background: url(/images/controllers.png) no-repeat;
+    background: url(images/controllers.png) no-repeat;
     width: 135px; 
     height: 134px;
 }
@@ -42,7 +42,7 @@ div.cst_controllers {
 }
 
 div.cst_controllers div.cst_play_toogle {
-   background: url(/images/controllers.png) no-repeat;
+   background: url(images/controllers.png) no-repeat;
    background-position: 0 -153px; width: 38px; height: 37px;
    float: left;
     margin: 4px 10px 0px 10px;
