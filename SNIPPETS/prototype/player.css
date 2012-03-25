@@ -36,7 +36,7 @@ div.cst_controllers {
     z-index: 4000;
     position: absolute;
     bottom: 0px; 
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.6);
     height: 45px;
     width: 100%;
 }
