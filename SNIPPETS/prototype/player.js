@@ -4,11 +4,12 @@ function Cstplayer( options ){ this.Init( options ); }
 Cstplayer.prototype.Settings = (function(){ 
     return {
         player: 'cst_video',
-        width: 950,
-        height: 600,
-        autoplay: 0,        
+        width: 850,
+        height: 450,
+        autoplay: 0,
+        id: null,
         volume: 100 
-    }
+    };
 }());
 
 /* Helper class 
@@ -30,11 +31,11 @@ Cstplayer.prototype.Helper = (function(){
                 height: get_int($e.css('height'))
             };
         },
-        get_percentage = function( num, total, rfloat ) {
+        get_percentage = function( num, total, returnfloat ) {
             /* Ret = Int || float
              * Percentage as floats ranges from 0 to 1. */
             var ret = num * 100 / total, 
-                rfloat = typeof(rfloat)!="undefined" ? rfloat : false;
+                rfloat = typeof(returnfloat)!=="undefined" ? rfloat : false;
 
             return rfloat ? ret : Math.floor(ret);
         },
@@ -46,10 +47,10 @@ Cstplayer.prototype.Helper = (function(){
             
              return  minutes + ":" + seconds;
         },
-        resize = function( $e, measure ) {
+        resize = function( $e, mes ) {
             /* Resize element based on parent size, and sibblings size to fully fill entire available space */
             var self = this,
-                measure = measure || "both",
+                measure = mes || "both",
                 resize = {},
                 $p = $e.parent(),
                 $s = $e.siblings(),
@@ -74,9 +75,9 @@ Cstplayer.prototype.Helper = (function(){
                     break;
             }
 
-            $e.css( resize )
+            $e.css( resize );
         },
-        set_element_draggable = function( $e, options ) {
+        set_element_draggable = function( $e, opt ) {
             /* Can set directions that the element can be dragged "x", "y", "both" default "both"
             * Can align handle to "left" "right" or "center" default "center"
             * A parent for the dragger to be based on can be passed or it will assume its his parent container
@@ -84,7 +85,7 @@ Cstplayer.prototype.Helper = (function(){
             * Assumes element has position absolute and bounds have position relative
             */
             var ret = false,
-                options = options || {},
+                options = opt || {},
                 self = this;
 
             if( !$e.hasClass('draggable') )
@@ -108,10 +109,10 @@ Cstplayer.prototype.Helper = (function(){
                      /* Element to be dragged and the bounds that he is attached to */
                     var leftval = null,
                         topval = null,
-                        e = self.Bounds($e);  
+                        e = self.Bounds($e),
                         p = self.Bounds($p); 
 
-                    if( direction == "both" || direction == "x" )
+                    if( direction === "both" || direction === "x" )
                     {
 
                         var x_space = null;
@@ -129,17 +130,20 @@ Cstplayer.prototype.Helper = (function(){
                                 break;
                         }
 
-                     if( event.clientX >= ( p.width - ( e.width ) ) + p.offsetLeft )
+                     if( event.clientX >= ( p.width - ( e.width ) ) + p.offsetLeft ) {
                           leftval = p.width - e.width;
-                     else if( event.clientX <= p.offsetLeft + ( e.width ) )
+                     }
+                     else if( event.clientX <= p.offsetLeft + ( e.width ) ) {
                           leftval = 0;
-                     else
+                     } 
+                     else {
                           leftval = event.clientX - p.offsetLeft + x_space;
+                     }
 
                       $e.css({ left: leftval });
                     }
 
-                    if( direction == "both" || direction == "y" )
+                    if( direction === "both" || direction === "y" )
                     {
                         var y_space = null;
 
@@ -156,12 +160,15 @@ Cstplayer.prototype.Helper = (function(){
                                 break;
                         }
 
-                     if( event.clientY >= ( p.height - ( e.height ) ) + p.offsetTop )
+                     if( event.clientY >= ( p.height - ( e.height ) ) + p.offsetTop ) {
                           topval = p.height - e.height;
-                     else if( event.clientY <= p.offsetTop + ( e.height ) )
+                     }
+                     else if( event.clientY <= p.offsetTop + ( e.height ) ) {
                           topval = 0;
-                     else
+                     }
+                     else {
                           topval = event.clientY - p.offsetTop + y_space;
+                     }
 
                       $e.css({ top: topval });
                     }
@@ -192,7 +199,7 @@ Cstplayer.prototype.Helper = (function(){
                 .bind('click '+((unconstrain) ? '' :'mouseleave ')+'mouseup', function(event){
                     stop_browser_default(event);
                     stop_dragging();
-                })
+                });
 
                 $('body')
                 .mouseup(function(event){
@@ -209,10 +216,10 @@ Cstplayer.prototype.Helper = (function(){
 
             return ret;
         },
-        center = function( $e, $p ) {
+        center = function( $e, $parent ) {
             var self = this,
-                $p = $p || $e.parent(),
-                be = self.Bounds( $e );
+                $p = $parent || $e.parent(),
+                be = self.Bounds( $e ),
                 bp = self.Bounds( $p );
             $e.css({ top: self.Int(bp.height/2) - self.Int(be.height/2), left: self.Int(bp.width/2) - self.Int(be.width/2)});
         };
@@ -233,7 +240,7 @@ Cstplayer.prototype.Controllers = (function(){
        var state = "unstarted",  
        player = null,
        toogle_play = function() {
-            return ( state != "playing" ) ? player.playVideo() : player.pauseVideo();
+            return ( state !== "playing" ) ? player.playVideo() : player.pauseVideo();
        },
        toogle_sound = function() {
             return ( player.isMuted() ) ? player.unMute() : player.mute();
@@ -249,7 +256,7 @@ Cstplayer.prototype.Controllers = (function(){
        },
        get_duration = function() {
             return ( player ) ? player.getDuration() : 0;
-       }
+       },
        set_video_time = function( num, allowSeekAhead ) {
             return player.seekTo( num, allowSeekAhead );
        },
@@ -334,11 +341,208 @@ Cstplayer.prototype.Controllers = (function(){
        };
 }());
 
+
 /* Init */
 Cstplayer.prototype.Init = (function( options ) { 
 
+    function autohide( $controllercontainer, $controller, hidespeed ) { 
+
+               // Auto hide when starting
+               var $n = $controllercontainer,
+                   $c = $controller,
+                   h = $controller.css('height'),
+                   t = hidespeed || 400; 
+               
+               $c.animate({ bottom: "-"+h }, t).removeClass('over');
+
+               $n
+               .mouseover(function(event) {
+                   $c.animate({ bottom: "0px" }, t).addClass('over');
+               })
+               .mouseleave(function(event) {
+                   $c.animate({ bottom: "-"+h }, t).removeClass('over');
+               }); 
+    }
+
+    function play( $centerplaybutton, $playbtn ) {
+            var $c = $centerplaybutton,
+                $p = $playbtn;
+
+            /* play toogle */
+            $p.click(function(){ 
+                self.Controllers.PlayToogle(); 
+                
+                $p.toggleClass('playing');
+                $c.hide(); 
+            });
+    }
+
+    function seekbar( $progressbar, $handle, $indicator, $centerplaybutton ) {
+            var $p = $progressbar,
+                $h = $handle,
+                $i = $indicator,
+                $t = $centerplaybutton;
+
+
+            self.Helper.Draggable( $h, {
+                direction: "x",
+                align: "center",
+                callback: {
+                  dragging:  function( position ) {
+                        if(!this.progressbarCached) {
+                            this.progressbarCached = { $indicator: $i, bar_width: self.Helper.Int($p.css('width')) };
+                        }
+
+                       this.progressbarCached.steps = this.progressbarCached.bar_width / self.Controllers.Duration();
+
+                       this.progressbarCached.$indicator 
+                       .show() 
+                       .css('left', position.left )
+                       .html(self.Helper.Minutes(position.left / this.progressbarCached.steps));
+                  },
+                  stop: function() {
+                      if(!this.progressbarCached) {
+                           this.progressbarCached = { $indicator: $i, bar_width: self.Helper.Int($p.css('width')) };
+                      }
+                      var steps = this.progressbarCached.bar_width / self.Controllers.Duration(),
+                          playtime = self.Helper.Int(this.progressbarCached.$indicator.css('left')) / this.progressbarCached.steps;
+
+                      self.Controllers.Seek(playtime);
+                      this.progressbarCached.$indicator.hide();
+                      $t.hide();
+                  }
+                }
+            });
+    }
+
+    function volumebar( $volumetoggle, $volumebar, $volumecontainer, $volumehandle, $volumeblock ) {
+
+            var $vt = $volumetoggle,
+                $vb = $volumebar,
+                $vc = $volumecontainer,
+                $vh = $volumehandle,
+                $vk = $volumeblock;
+
+            $vt.click(function(){ 
+                self.Controllers.SoundToogle(); 
+                $(this).toggleClass('muted'); 
+            })
+            .mouseover(function(){
+                $vb.fadeIn('fast');   
+                if(self.volumeTimmer) { window.clearTimeout(self.volumeTimmer); }
+            })
+            .mouseleave(function(){
+                self.volumeTimmer = window.setTimeout(function(){
+                    $vb.fadeOut('normal');   
+                }, 500);
+            }); 
+
+            $vc
+            .bind('mouseover mousemove', function(){
+                if(self.volumeTimmer) { window.clearTimeout(self.volumeTimmer); }
+            })
+            .mouseleave(function(){
+                self.volumeTimmer = window.setTimeout(function(){
+                    $vb.fadeOut('normal');   
+                }, 500);
+            }); 
+
+            /* Add the volume bar helper */
+            self.Helper.Draggable($vh, 
+            {   
+                direction: "y",
+                valign: "center",
+                //unconstrain: true,
+                callback: {
+                  dragging:  function( position ) { 
+                    if(!this.volumeCached) {
+                        var $handle = $vh,
+                            container_size = self.Helper.Int($vb.css('height')),
+                            handle_size = self.Helper.Int($handle.css('height'));
+
+                        this.volumeCached = { $handle: $handle, max_size: container_size - handle_size }; // cache variables
+                    }
+                    
+                    this.volumeCached.volume = self.Helper.Percentage( self.Helper.Int(this.volumeCached.$handle.css('bottom')), this.volumeCached.max_size);
+                    self.Controllers.Volume(this.volumeCached.volume);
+                    $vk.css('height', this.volumeCached.volume + "%");
+                  },  
+                  stop: function() {
+                    if(!this.volumeCached) {
+                        var $handle = $vh,
+                            container_size = self.Helper.Int($vb.css('height')),
+                            handle_size = self.Helper.Int($handle.css('height'));
+
+                        this.volumeCached = { $handle: $handle, max_size: container_size - handle_size }; // cache variables
+                    }
+                  }   
+                }   
+            }); 
+    }
+
+    function mainloop( $containerprogressbar, $totaltime, $curtimer, $playingbar, $downloadingbar ) {
+
+            var $k = $containerprogressbar,
+                $t = $totaltime,
+                $c = $curtimer,
+                $p = $playingbar,
+                $d = $downloadingbar;
+
+            /* Main Loop 
+             * Here is where the videp dowload bar will be updated and the timer
+             * */
+            this.mainLoop = window.setInterval(function(){ 
+                if(!this.loopCached) {
+
+                    this.loopCached = { 
+                        duration: self.Controllers.Duration(),
+                        progresss_bar_width: self.Helper.Int( $k.css('width') ),
+                        $cur: $c, 
+                        $playing_bar: $p,
+                        $download_bar: $d
+                    };
+
+                    this.loopCached.play_step = this.loopCached.progresss_bar_width / this.loopCached.duration;
+
+
+                    $t.html( self.Helper.Minutes(this.loopCached.duration) ); // this is only called once 
+                }
+
+                var playing = self.Helper.Int(self.Controllers.Time() * this.loopCached.play_step),
+                    download_step = ( self.Helper.Int( (this.loopCached.progresss_bar_width / self.Controllers.Buffer.total())  * self.Controllers.Buffer.download() ) ) || 0;
+
+                this.loopCached.$playing_bar.css('width', playing );
+                this.loopCached.$download_bar.css('width', download_step );
+                this.loopCached.$cur.html( self.Helper.Minutes(self.Controllers.Time()) );
+            },50 );
+
+    }
+
+    function fit( $videoplayer, $progressbar, $centerplaybutton ) {
+
+        var $v = $videoplayer,
+            $b = $progressbar,
+            $c = $centerplaybutton;
+
+        $v.css({
+            height: self.Settings.height,
+            width: self.Settings.width 
+        });
+
+        self.Helper.Resize($b, 'width');
+        self.Helper.Center($c);
+    }
+    
     // Extend settings to read from options
-    if( options ) { for( prop in options ) { this.Settings[prop] = options[prop]; } }
+    if( options ) { 
+        var setting;
+        
+        for( setting in options ) { 
+           if( typeof(this.Settings[setting]) !== 'undefined' ) {
+              this.Settings[setting] = options[setting]; 
+           }
+        } 
+    }
     var self = this,
     build = (function() 
     {
@@ -379,139 +583,24 @@ Cstplayer.prototype.Init = (function( options ) {
        }()),
 
        events = function() {
+            // attach events
 
-            /* play toogle */
-            $('div.cst_play_toogle').click(function(){ 
-                self.Controllers.PlayToogle(); 
-                
-                $('div.cst_play_toogle').toggleClass('playing');
-                $('div.cst_videoplayer div.cst_play_toogle').hide(); 
-            });
+            autohide($('div.cst_controllers_container'), $('div.cst_controllers'));  // auto hide controllers
 
-            /* play toogle */
-            $('div.cst_volume_toogle').click(function(){ 
-                self.Controllers.SoundToogle(); 
-                $(this).toggleClass('muted'); 
-            })
-            .mouseover(function(){
-                $('div.cst_volume_bar').fadeIn('fast');   
-                if(self.volumeTimmer) { window.clearTimeout(self.volumeTimmer) }
-            })
-            .mouseleave(function(){
-                self.volumeTimmer = window.setTimeout(function(){
-                    $('div.cst_volume_bar').fadeOut('normal');   
-                }, 500);
-            }); 
+            play($('div.cst_videoplayer div.cst_play_toogle'), $('div.cst_play_toogle')); // play button and center play button
 
-            $('div.cst_volume_bar')
-            .bind('mouseover mousemove', function(){
-                if(self.volumeTimmer) { window.clearTimeout(self.volumeTimmer); }
-            })
-            .mouseleave(function(){
-                self.volumeTimmer = window.setTimeout(function(){
-                    $('div.cst_volume_bar').fadeOut('normal');   
-                }, 500);
-            }); 
+            seekbar( $('div.cst_progress_bar'), $('.cst_progress_bar .cst_handle'), 
+                    $('.cst_progress_bar .cst_indicator'), $('div.cst_videoplayer div.cst_play_toogle') ); // seekbar for playing and download
 
+            volumebar( $('div.cst_volume_toogle'), $('div.cst_volume_bar'), 
+                    $('div.cst_volume_itensity_container'), $('div.cst_volume_bar .cst_handle'), $('div.cst_voume_itensity') ); // Volume toogle and bar
 
-            self.Helper.Draggable($('.cst_progress_bar .cst_handle'), 
-            {
-                direction: "x",
-                align: "center",
-                callback: {
-                  dragging:  function( position ) {
-                        if(!this.progressbarCached) {
-                            this.progressbarCached = { $indicator: $('.cst_progress_bar .cst_indicator'), bar_width: self.Helper.Int($('div.cst_progress_bar').css('width')) }
-                        }
-
-                       this.progressbarCached.steps = this.progressbarCached.bar_width / self.Controllers.Duration()
-
-                       this.progressbarCached.$indicator 
-                       .show() 
-                       .css('left', position.left )
-                       .html(self.Helper.Minutes(position.left / this.progressbarCached.steps));
-                  },
-                  stop: function() {
-                      if(!this.progressbarCached) {
-                           this.progressbarCached = { $indicator: $('.cst_progress_bar .cst_indicator'), bar_width: self.Helper.Int($('div.cst_progress_bar').css('width')) }
-                      }
-                      var steps = this.progressbarCached.bar_width / self.Controllers.Duration(),
-                          playtime = self.Helper.Int(this.progressbarCached.$indicator.css('left')) / this.progressbarCached.steps;
-
-                      self.Controllers.Seek(playtime);
-                      this.progressbarCached.$indicator.hide()   
-                      $('div.cst_videoplayer div.cst_play_toogle').hide();
-                  }
-                }
-            });
-
-            /* Add the volume bar helper */
-            self.Helper.Draggable($('.cst_volume_bar .cst_handle'), 
-            {   
-                direction: "y",
-                valign: "center",
-                //unconstrain: true,
-                callback: {
-                  dragging:  function( position ) { 
-                    if(!this.volumeCached) {
-                        var $handle = $('.cst_volume .cst_handle'),
-                            container_size = self.Helper.Int($('.cst_volume_bar').css('height')),
-                            handle_size = self.Helper.Int($handle.css('height'));
-
-                        this.volumeCached = { $handle: $handle, max_size: container_size - handle_size,  }; // cache variables
-                    }
-                    
-                    this.volumeCached.volume = self.Helper.Percentage( self.Helper.Int(this.volumeCached.$handle.css('bottom')), this.volumeCached.max_size);
-                    self.Controllers.Volume(this.volumeCached.volume);
-                    $('div.cst_voume_itensity').css('height', this.volumeCached.volume + "%");
-                  },  
-                  stop: function() {
-                    if(!this.volumeCached) {
-                        var $handle = $('.cst_volume .cst_handle'),
-                            container_size = self.Helper.Int($('.cst_volume_bar').css('height')),
-                            handle_size = self.Helper.Int($handle.css('height'));
-
-                        this.volumeCached = { $handle: $handle, max_size: container_size - handle_size,  }; // cache variables
-                    }
-                  }   
-                }   
-            }); 
-
-            /* Main Loop */
-            this.mainLoop = window.setInterval(function(){ 
-                if(!this.loopCached) {
-
-                    this.loopCached = { 
-                        duration: self.Controllers.Duration(),
-                        progresss_bar_width: self.Helper.Int( $('div.cst_progress_bar').css('width') ),
-                        $cur: $('div.cst_indicator .cst_current'), 
-                        $playing_bar: $('div.cst_playing'),
-                        $download_bar: $('div.cst_downloading')
-                    };
-
-                    this.loopCached.play_step = this.loopCached.progresss_bar_width / this.loopCached.duration;
-
-
-                    $('div.cst_indicator .cst_total').html( self.Helper.Minutes(this.loopCached.duration) ); // this is only called once 
-                }
-
-                var playing = self.Helper.Int(self.Controllers.Time() * this.loopCached.play_step),
-                    download_step = ( self.Helper.Int( (this.loopCached.progresss_bar_width / self.Controllers.Buffer.total())  * self.Controllers.Buffer.download() ) ) || 0;
-
-                this.loopCached.$playing_bar.css('width', playing );
-                this.loopCached.$download_bar.css('width', download_step );
-                this.loopCached.$cur.html( self.Helper.Minutes(self.Controllers.Time()) );
-            },50 );
-
+            mainloop( $('div.cst_progress_bar'), $('div.cst_indicator .cst_total'), 
+                    $('div.cst_indicator .cst_current'), $('div.cst_playing'), $('div.cst_downloading') ); // Main loop to update things
        };
 
-        $('div.cstPlayer').css({
-            height: self.Settings.height,
-            width: self.Settings.width 
-        });
+       fit( $('div.cstPlayer'), $('div.cst_progress_bar'), $('.cst_videoplayer .cst_play_toogle') ); // Resize to fit boundaries
 
-        self.Helper.Resize( $('div.cst_progress_bar'), 'width');
-        self.Helper.Center($('.cst_videoplayer .cst_play_toogle'));
                
        return self.Controllers.Load( self.Settings, events );
 

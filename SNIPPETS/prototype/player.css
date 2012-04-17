@@ -32,13 +32,21 @@ div.cst_videoplayer div.cst_play_toogle {
     height: 134px;
 }
 
-div.cst_controllers {
-    z-index: 4000;
+div.cst_controllers_container {
+    height: 85px;
+    width: 100%;
     position: absolute;
     bottom: 0px; 
+    overflow: hidden;
+}
+
+div.cst_controllers {
+    z-index: 4000;
     background: rgba(0, 0, 0, 0.6);
     height: 45px;
     width: 100%;
+    position: absolute;
+    bottom: 0px;
 }
 
 div.cst_controllers div.cst_play_toogle {
@@ -117,6 +125,13 @@ div.cst_volume_bar {
     margin: -70px 0px 0px 6px;
 }
 
+div.cst_volume_itensity_container {
+    width: 60px;
+    height: 100%;
+    margin: 0px 0px 0px -20px;
+}
+
+
 div.cst_volume_bar div.cst_handle {
     height: 10px;
     width: 10px;
@@ -139,7 +154,8 @@ div.cst_voume_itensity {
     background: rgba(255,255,255, 0.8);
     width: 2px;
     position: absolute;
-    bottom: 0;
+    bottom: 0px;
+    left: 0px;
     height: 100%;
 }
 
