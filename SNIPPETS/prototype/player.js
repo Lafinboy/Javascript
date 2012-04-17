@@ -112,8 +112,7 @@ Cstplayer.prototype.Helper = (function(){
                         e = self.Bounds($e),
                         p = self.Bounds($p); 
 
-                    if( direction === "both" || direction === "x" )
-                    {
+                    function _x() {
 
                         var x_space = null;
 
@@ -130,21 +129,21 @@ Cstplayer.prototype.Helper = (function(){
                                 break;
                         }
 
-                     if( event.clientX >= ( p.width - ( e.width ) ) + p.offsetLeft ) {
+                        if( event.clientX >= ( p.width - ( e.width ) ) + p.offsetLeft ) {
                           leftval = p.width - e.width;
-                     }
-                     else if( event.clientX <= p.offsetLeft + ( e.width ) ) {
+                        }
+                        else if( event.clientX <= p.offsetLeft + ( e.width ) ) {
                           leftval = 0;
-                     } 
-                     else {
+                        } 
+                        else {
                           leftval = event.clientX - p.offsetLeft + x_space;
-                     }
+                        }
 
-                      $e.css({ left: leftval });
+                        $e.css({ left: leftval });
                     }
 
-                    if( direction === "both" || direction === "y" )
-                    {
+                    function _y() {
+
                         var y_space = null;
 
                         switch( valign  )
@@ -160,17 +159,34 @@ Cstplayer.prototype.Helper = (function(){
                                 break;
                         }
 
-                     if( event.clientY >= ( p.height - ( e.height ) ) + p.offsetTop ) {
+                        if( event.clientY >= ( p.height - ( e.height ) ) + p.offsetTop ) {
                           topval = p.height - e.height;
-                     }
-                     else if( event.clientY <= p.offsetTop + ( e.height ) ) {
+                        }
+                        else if( event.clientY <= p.offsetTop + ( e.height ) ) {
                           topval = 0;
-                     }
-                     else {
+                        }
+                        else {
                           topval = event.clientY - p.offsetTop + y_space;
-                     }
+                        }
 
-                      $e.css({ top: topval });
+                        $e.css({ top: topval });
+
+                    }
+
+                    switch( direction ) 
+                    {
+                        case "x":
+                            _x();
+                            break;
+
+                        case "y":
+                            _y();
+                            break;
+
+                        default:
+                            _x();
+                            _y();
+
                     }
 
                     callback_dragging({ left: leftval, top: topval });
@@ -199,6 +215,12 @@ Cstplayer.prototype.Helper = (function(){
                 .bind('click '+((unconstrain) ? '' :'mouseleave ')+'mouseup', function(event){
                     stop_browser_default(event);
                     stop_dragging();
+                }).
+                click(function(event){
+                    stop_browser_default(event);
+                    start_dragging(event);
+                    stop_dragging();
+                    callback_stop();
                 });
 
                 $('body')
@@ -423,6 +445,22 @@ Cstplayer.prototype.Init = (function( options ) {
                 $vh = $volumehandle,
                 $vk = $volumeblock;
 
+            var cacheVolume = function() {
+                        var $handle = $vh,
+                            container_size = self.Helper.Int($vb.css('height')),
+                            handle_size = self.Helper.Int($handle.css('height'));
+
+                    return { $handle: $handle, max_size: container_size - handle_size }; 
+            }
+
+            function updateVolume( volumecached ) {
+                    var cache = volumecached, 
+                        volume = self.Helper.Percentage( self.Helper.Int(volumecached.$handle.css('bottom')),volumecached.max_size);
+
+                    self.Controllers.Volume(volume);
+                    $vk.css('height', volume + "%");
+            }
+
             $vt.click(function(){ 
                 self.Controllers.SoundToogle(); 
                 $(this).toggleClass('muted'); 
@@ -447,6 +485,10 @@ Cstplayer.prototype.Init = (function( options ) {
                 }, 500);
             }); 
 
+            $vc.click(function(){
+                    updateVolume(cacheVolume());
+            });
+
             /* Add the volume bar helper */
             self.Helper.Draggable($vh, 
             {   
@@ -456,24 +498,14 @@ Cstplayer.prototype.Init = (function( options ) {
                 callback: {
                   dragging:  function( position ) { 
                     if(!this.volumeCached) {
-                        var $handle = $vh,
-                            container_size = self.Helper.Int($vb.css('height')),
-                            handle_size = self.Helper.Int($handle.css('height'));
-
-                        this.volumeCached = { $handle: $handle, max_size: container_size - handle_size }; // cache variables
+                        this.volumeCached = cacheVolume();
                     }
                     
-                    this.volumeCached.volume = self.Helper.Percentage( self.Helper.Int(this.volumeCached.$handle.css('bottom')), this.volumeCached.max_size);
-                    self.Controllers.Volume(this.volumeCached.volume);
-                    $vk.css('height', this.volumeCached.volume + "%");
+                    updateVolume(this.volumeCached);
                   },  
                   stop: function() {
                     if(!this.volumeCached) {
-                        var $handle = $vh,
-                            container_size = self.Helper.Int($vb.css('height')),
-                            handle_size = self.Helper.Int($handle.css('height'));
-
-                        this.volumeCached = { $handle: $handle, max_size: container_size - handle_size }; // cache variables
+                        this.volumeCached = cacheVolume();
                     }
                   }   
                 }   
@@ -585,7 +617,7 @@ Cstplayer.prototype.Init = (function( options ) {
        events = function() {
             // attach events
 
-            autohide($('div.cst_controllers_container'), $('div.cst_controllers'));  // auto hide controllers
+            //autohide($('div.cst_controllers_container'), $('div.cst_controllers'));  // auto hide controllers
 
             play($('div.cst_videoplayer div.cst_play_toogle'), $('div.cst_play_toogle')); // play button and center play button
 
