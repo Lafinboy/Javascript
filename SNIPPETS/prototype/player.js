@@ -457,7 +457,7 @@ Cstplayer.prototype.Init = (function( options ) {
                             handle_size = self.Helper.Int($handle.css('height'));
 
                     return { $handle: $handle, max_size: container_size - handle_size }; 
-            }
+            };
 
             function updateVolume( volumecached ) {
                     var cache = volumecached, 
