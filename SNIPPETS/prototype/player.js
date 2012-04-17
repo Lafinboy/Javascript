@@ -373,17 +373,23 @@ Cstplayer.prototype.Init = (function( options ) {
                var $n = $controllercontainer,
                    $c = $controller,
                    h = $controller.css('height'),
-                   t = hidespeed || 400; 
+                   w = null,
+                   t = hidespeed || 300; 
                
                $c.animate({ bottom: "-"+h }, t).removeClass('over');
 
                $n
                .mouseover(function(event) {
+                   window.clearTimeout(w);
+                   w = null;
                    $c.animate({ bottom: "0px" }, t).addClass('over');
                })
                .mouseleave(function(event) {
-                   $c.animate({ bottom: "-"+h }, t).removeClass('over');
+                   w = window.setTimeout(function(){
+                       $c.animate({ bottom: "-"+h }, t).removeClass('over');
+                   }, 400);
                }); 
+
     }
 
     function play( $centerplaybutton, $playbtn ) {
@@ -617,7 +623,7 @@ Cstplayer.prototype.Init = (function( options ) {
        events = function() {
             // attach events
 
-            //autohide($('div.cst_controllers_container'), $('div.cst_controllers'));  // auto hide controllers
+            autohide($('div.cst_controllers_container'), $('div.cst_controllers'));  // auto hide controllers
 
             play($('div.cst_videoplayer div.cst_play_toogle'), $('div.cst_play_toogle')); // play button and center play button
 
