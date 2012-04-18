@@ -4,8 +4,8 @@ function Cstplayer( options ){ this.Init( options ); }
 Cstplayer.prototype.Settings = (function(){ 
     return {
         player: 'cst_video',
-        width: 850,
-        height: 450,
+        width: 450,
+        height: 350,
         autoplay: 0,
         id: null,
         $container: null,
@@ -342,6 +342,7 @@ Cstplayer.prototype.Controllers = (function(){
                 'wmode': 'opaque',
                 'modestbranding': 1,
                 'rel': 0,
+                'id': opt.player,
                 'disablekb': 0,
                 'showinfo': 0,
                 'controls': 0 
@@ -645,22 +646,22 @@ Cstplayer.prototype.Init = (function( options ) {
        // Get elements reference based on video player id
        e = {
             $player: self.Settings.$container,
-            $controllersContainer: $('.cst_controllers_container', this.$player),
-            $controllers: $('.cst_controllers', this.$player),
-            $centeredPlayBtn: $('.cst_videoplayer .cst_play_toogle', this.$player), 
-            $playBtn: $('.cst_play_toogle', this.$player),
-            $progressBar: $('.cst_progress_bar', this.$player),
-            $progressBarHandle: $('.cst_progress_bar .cst_handle', this.$player),
-            $progressBarIndicator: $('.cst_progress_bar .cst_indicator', this.$player),
-            $playingBar: $('.cst_playing', this.$player),
-            $downloadBar: $('.cst_downloading', this.$player),
-            $volumeToggleBtn: $('.cst_volume_toogle', this.$player),
-            $volumeBar: $('.cst_volume_bar', this.$player),
-            $volumeItensityContainer: $('.cst_volume_itensity_container', this.$player),
-            $volumeBarHandle: $('.cst_volume_bar .cst_handle', this.$player),
-            $volumeItensity: $('.cst_voume_itensity', this.$player),
-            $totalTimeIndicator: $('.cst_indicator .cst_total', this.$player),
-            $currentTimeIndicator: $('.cst_indicator .cst_current', this.$player)
+            $controllersContainer: self.Settings.$container.find('.cst_controllers_container'),
+            $controllers: self.Settings.$container.find('.cst_controllers'),
+            $centeredPlayBtn: self.Settings.$container.find('.cst_videoplayer .cst_play_toogle'), 
+            $playBtn: self.Settings.$container.find('.cst_play_toogle'),
+            $progressBar: self.Settings.$container.find('.cst_progress_bar'),
+            $progressBarHandle: self.Settings.$container.find('.cst_progress_bar .cst_handle'),
+            $progressBarIndicator: self.Settings.$container.find('.cst_progress_bar .cst_indicator'),
+            $playingBar: self.Settings.$container.find('.cst_playing'),
+            $downloadBar: self.Settings.$container.find('.cst_downloading'),
+            $volumeToggleBtn: self.Settings.$container.find('.cst_volume_toogle'),
+            $volumeBar: self.Settings.$container.find('.cst_volume_bar'),
+            $volumeItensityContainer: self.Settings.$container.find('.cst_volume_itensity_container'),
+            $volumeBarHandle: self.Settings.$container.find('.cst_volume_bar .cst_handle'),
+            $volumeItensity: self.Settings.$container.find('.cst_voume_itensity'),
+            $totalTimeIndicator: self.Settings.$container.find('.cst_indicator .cst_total'),
+            $currentTimeIndicator: self.Settings.$container.find('.cst_indicator .cst_current')
         },
 
        events = function() {
@@ -705,4 +706,6 @@ Cstplayer.prototype.Init = (function( options ) {
 function onYouTubePlayerAPIReady() {
   //var
   player = new Cstplayer({ player: 'cst_video', id: 'CwC5BFX7rqQ', $container: $('#cstPlayer') });
+  simpsons = new Cstplayer({   player: 'jonasss',  id: 'r6VCnYkNYLo',  $container: $('#placido') });
+  southpark = new Cstplayer({  player: 'omaaaa', id: 'PxBzeYwJ_ng', $container: $('#gooool') });
 }
