@@ -8,6 +8,7 @@ Cstplayer.prototype.Settings = (function(){
         height: 450,
         autoplay: 0,
         id: null,
+        $container: null,
         volume: 100 
     };
 }());
@@ -261,6 +262,7 @@ Cstplayer.prototype.Helper = (function(){
 Cstplayer.prototype.Controllers = (function(){ 
        var state = "unstarted",  
        player = null,
+       play_cb = function(){},
        toogle_play = function() {
             return ( state !== "playing" ) ? player.playVideo() : player.pauseVideo();
        },
@@ -294,9 +296,11 @@ Cstplayer.prototype.Controllers = (function(){
                     state = "ended";
                     break;
                 case 1:
+                    this.play_cb( "play" );
                     state = "playing";
                     break;
                 case 2:
+                    this.play_cb( "stop" );
                     state = "paused";
                     break;
                 case 3:
@@ -325,7 +329,8 @@ Cstplayer.prototype.Controllers = (function(){
             function dispatcher( event ) {
                 /* Load events when the player is ready */
                 on_player_ready(event);
-                callEvents();
+                var evts = callEvents(); // getting refence of the event play after attaching events in order to add it as response to default play
+                this.play_cb = evts.play;
             }
 
             return new YT.Player(opt.player, {
@@ -337,6 +342,7 @@ Cstplayer.prototype.Controllers = (function(){
                 'wmode': 'opaque',
                 'modestbranding': 1,
                 'rel': 0,
+                'disablekb': 0,
                 'showinfo': 0,
                 'controls': 0 
               },
@@ -396,13 +402,29 @@ Cstplayer.prototype.Init = (function( options ) {
             var $c = $centerplaybutton,
                 $p = $playbtn;
 
+
+            function _play( action ) {
+                $c.hide(); // remove centered button 
+
+                switch( action ) {
+                    case "play":
+                        $p.addClass('playing');
+                        break;
+                    case "stop":
+                        $p.removeClass('playing');
+                        break;
+                    default:
+                        $p.toggleClass('playing');
+                }
+            }
+
             /* play toogle */
             $p.click(function(){ 
+                $c.hide(); // remove centered button 
                 self.Controllers.PlayToogle(); 
-                
-                $p.toggleClass('playing');
-                $c.hide(); 
             });
+
+            return _play;
     }
 
     function seekbar( $progressbar, $handle, $indicator, $centerplaybutton ) {
@@ -620,24 +642,57 @@ Cstplayer.prototype.Init = (function( options ) {
            };
        }()),
 
+       // Get elements reference based on video player id
+       e = {
+            $player: self.Settings.$container,
+            $controllersContainer: $('.cst_controllers_container', this.$player),
+            $controllers: $('.cst_controllers', this.$player),
+            $centeredPlayBtn: $('.cst_videoplayer .cst_play_toogle', this.$player), 
+            $playBtn: $('.cst_play_toogle', this.$player),
+            $progressBar: $('.cst_progress_bar', this.$player),
+            $progressBarHandle: $('.cst_progress_bar .cst_handle', this.$player),
+            $progressBarIndicator: $('.cst_progress_bar .cst_indicator', this.$player),
+            $playingBar: $('.cst_playing', this.$player),
+            $downloadBar: $('.cst_downloading', this.$player),
+            $volumeToggleBtn: $('.cst_volume_toogle', this.$player),
+            $volumeBar: $('.cst_volume_bar', this.$player),
+            $volumeItensityContainer: $('.cst_volume_itensity_container', this.$player),
+            $volumeBarHandle: $('.cst_volume_bar .cst_handle', this.$player),
+            $volumeItensity: $('.cst_voume_itensity', this.$player),
+            $totalTimeIndicator: $('.cst_indicator .cst_total', this.$player),
+            $currentTimeIndicator: $('.cst_indicator .cst_current', this.$player)
+        },
+
        events = function() {
             // attach events
 
-            autohide($('div.cst_controllers_container'), $('div.cst_controllers'));  // auto hide controllers
+            autohide( e.$controllersContainer, 
+                      e.$controllers);  // auto hide controllers
 
-            play($('div.cst_videoplayer div.cst_play_toogle'), $('div.cst_play_toogle')); // play button and center play button
+            var p = play( e.$centeredPlayBtn, 
+                          e.$playBtn); // play button and center play button
 
-            seekbar( $('div.cst_progress_bar'), $('.cst_progress_bar .cst_handle'), 
-                    $('.cst_progress_bar .cst_indicator'), $('div.cst_videoplayer div.cst_play_toogle') ); // seekbar for playing and download
+            seekbar( e.$progressBar, 
+                     e.$progressBarHandle, 
+                     e.$progressBarIndicator, 
+                     e.$centeredPlayBtn ); // seekbar for playing and download
 
-            volumebar( $('div.cst_volume_toogle'), $('div.cst_volume_bar'), 
-                    $('div.cst_volume_itensity_container'), $('div.cst_volume_bar .cst_handle'), $('div.cst_voume_itensity') ); // Volume toogle and bar
+            volumebar( e.$volumeToggleBtn, 
+                       e.$volumeBar, 
+                       e.$volumeItensityContainer, 
+                       e.$volumeBarHandle, 
+                       e.$volumeItensity ); // Volume toogle and bar
 
-            mainloop( $('div.cst_progress_bar'), $('div.cst_indicator .cst_total'), 
-                    $('div.cst_indicator .cst_current'), $('div.cst_playing'), $('div.cst_downloading') ); // Main loop to update things
+            mainloop( e.$progressBar, 
+                      e.$totalTimeIndicator, 
+                      e.$currentTimeIndicator, 
+                      e.$playingBar, 
+                      e.$downloadBar ); // Main loop to update things
+
+            return { play: p }; // some will need to be called after
        };
 
-       fit( $('div.cstPlayer'), $('div.cst_progress_bar'), $('.cst_videoplayer .cst_play_toogle') ); // Resize to fit boundaries
+       fit( e.$player, e.$progressBar, e.$centeredPlayBtn ); // Resize to fit boundaries
 
                
        return self.Controllers.Load( self.Settings, events );
@@ -649,5 +704,5 @@ Cstplayer.prototype.Init = (function( options ) {
 
 function onYouTubePlayerAPIReady() {
   //var
-  player = new Cstplayer({ player: 'cst_video', id: 'CwC5BFX7rqQ' });
+  player = new Cstplayer({ player: 'cst_video', id: 'CwC5BFX7rqQ', $container: $('#cstPlayer') });
 }
