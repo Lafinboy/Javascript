@@ -342,7 +342,6 @@ Cstplayer.prototype.Controllers = (function(){
                 'wmode': 'opaque',
                 'modestbranding': 1,
                 'rel': 0,
-                'id': opt.player,
                 'disablekb': 0,
                 'showinfo': 0,
                 'controls': 0 
@@ -666,7 +665,6 @@ Cstplayer.prototype.Init = (function( options ) {
 
        events = function() {
             // attach events
-
             autohide( e.$controllersContainer, 
                       e.$controllers);  // auto hide controllers
 
@@ -706,6 +704,4 @@ Cstplayer.prototype.Init = (function( options ) {
 function onYouTubePlayerAPIReady() {
   //var
   player = new Cstplayer({ player: 'cst_video', id: 'CwC5BFX7rqQ', $container: $('#cstPlayer') });
-  simpsons = new Cstplayer({   player: 'jonasss',  id: 'r6VCnYkNYLo',  $container: $('#placido') });
-  southpark = new Cstplayer({  player: 'omaaaa', id: 'PxBzeYwJ_ng', $container: $('#gooool') });
 }
