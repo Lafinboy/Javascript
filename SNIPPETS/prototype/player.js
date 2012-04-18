@@ -1,3 +1,4 @@
+var miter = [];
 function Cstplayer( options ){ this.Init( options ); } 
 
 /* Settings */
@@ -698,10 +699,14 @@ Cstplayer.prototype.Init = (function( options ) {
 
     }());
 
+   console.log( build );
+   miter.push(build);
    return true;
 });
 
 function onYouTubePlayerAPIReady() {
   //var
   player = new Cstplayer({ player: 'cst_video', id: 'CwC5BFX7rqQ', $container: $('#cstPlayer') });
+  player2 = new Cstplayer({ player: 'cst_video2', id: 'CwC5BFX7rqQ', $container: $('#cstPlayer2') });
+  player3 = new Cstplayer({ player: 'cst_video3', id: 'CwC5BFX7rqQ', $container: $('#cstPlayer3') });
 }

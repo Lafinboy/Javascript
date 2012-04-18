@@ -8,7 +8,9 @@ body {
   margin: 0px;
 }
 
-#cst_video { height: 100%; width: 100%; }
+#cst_video,
+#cst_video2, 
+#cst_video3 { height: 100%; width: 100%; }
 
 /* Container */
 div.cstPlayer {
