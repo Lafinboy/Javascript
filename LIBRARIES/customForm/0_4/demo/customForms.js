@@ -168,7 +168,7 @@ THE SOFTWARE.
                     c.push($(this));
                 } else if ($(this).is('input[type=radio]')) {
                     r.push($(this));
-                } else if ($(this).is('input[type=text]')) {
+                } else if ( $(this).is('input[type=text]') || $(this).is('textarea') ) {
                     t.push($(this));
                 } else if ($(this).is('input[type=file]')) {
                     f.push($(this));
