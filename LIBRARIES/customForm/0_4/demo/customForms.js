@@ -322,12 +322,12 @@ THE SOFTWARE.
                     click: function(e) {
                         e.preventDefault(); // in case of settings.customEle as an a tag, prevent it to procced
                         
-                        $("." + settings.classPrefix + "radio").removeClass('checked');
+                        $("." + settings.classPrefix + $curEle.attr('name')).removeClass('checked');
                         $(this).addClass('checked');
                         
                         // loop all and remove the 
                         $(radios).each( function() { 
-                            $(this).prop('checked', false);
+                            $(this).hasClass(settings.classPrefix + $curEle.attr('name')).prop('checked', false);
                         });                       
                         $curEle.prop('checked', true);
                     }
