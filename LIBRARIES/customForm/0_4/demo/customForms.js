@@ -327,7 +327,8 @@ THE SOFTWARE.
                         
                         // loop all and remove the 
                         $(radios).each( function() { 
-                            $(this).hasClass(settings.classPrefix + $curEle.attr('name')).prop('checked', false);
+                            if($(this).hasClass(settings.classPrefix + $curEle.attr('name')))
+                                $(this).prop('checked', false);
                         });                       
                         $curEle.prop('checked', true);
                     }
